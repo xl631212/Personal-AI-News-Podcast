@@ -1,0 +1,10 @@
+hackernews-python
+requests
+beautifulsoup4
+streamlit
+gnews
+openai
+playwright
+doctran
+langchain
+edge-tts
