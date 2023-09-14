@@ -3,11 +3,9 @@ import streamlit as st
 import os
 import pprint
 from langchain.utilities import GoogleSerperAPIWrapper
-from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.llms.openai import OpenAI
 from langchain.agents import initialize_agent, Tool
 from langchain.agents import AgentType
-from hackernews import HackerNews
 import requests
 from bs4 import BeautifulSoup
 # from TTS.api import TTS
@@ -196,13 +194,11 @@ if option == 'English':
             bair_blog = summarize_website_content("https://bair.berkeley.edu/blog/")
             st.write("Searching for MIT Blog...")
             mit_blog = summarize_website_content('https://news.mit.edu/topic/artificial-intelligence2')
-            st.write("Searching Hackernews...")
-            hacker_news = heacker_news_content()
             st.write("Searching Google News...")
             google_news = fetch_gnews_links(query='AI LLM')
             st.write("Writing Newsletter...")
-            query = 'news from openai blog: ' + openai_blog + 'news from bair blog' + bair_blog + 'news from mit blog' + str(mit_blog) \
-                + 'news from hackernews' +  str(hacker_news['summary']) + 'news from google news' + str(google_news['summary'])
+            query = 'news from google news' + str(google_news['summary']) + 'news from openai blog: ' + openai_blog + 'news from bair blog' + bair_blog + 'news from mit blog' + str(mit_blog)
+                 
             query = query.replace('<|endoftext|>', '')
             user_message = query
             messages =  [
