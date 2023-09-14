@@ -1,5 +1,4 @@
 requests
-hackernews-python
 beautifulsoup4
 streamlit
 gnews
@@ -8,3 +7,4 @@ playwright
 doctran
 langchain
 edge-tts
+hackernews-python
