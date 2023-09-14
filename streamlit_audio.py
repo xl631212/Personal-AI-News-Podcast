@@ -231,12 +231,6 @@ if option == 'English':
             st.markdown(f"### {google_news['title'][i]}\n")
             st.markdown(google_news['summary'][i])
             st.markdown(f"[more on]({google_news['url'][i]})\n")
-
-        st.subheader('Hackernews', divider='orange')
-        for i in range(len(hacker_news['title'])):
-            st.markdown(f"### {hacker_news['title'][i]}\n")
-            st.markdown(hacker_news['summary'][i])
-            st.markdown(f"[more on]({hacker_news['url'][i]})\n")
         
         st.subheader('Openai blog', divider='green')
         st.markdown(openai_blog)
