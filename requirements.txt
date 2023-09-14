@@ -7,4 +7,4 @@ playwright
 doctran
 langchain
 edge-tts
-hackernews-python
+HackerNews
