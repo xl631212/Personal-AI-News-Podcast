@@ -28,9 +28,8 @@ system_message = '''
                 '''
 
 
-os.environ["SERPER_API_KEY"] = "c2973e70fb0e4d0a1e756b260cdbf0bc56ccdb56"
-os.environ["serper_api_key"]= "c2973e70fb0e4d0a1e756b260cdbf0bc56ccdb56"
-os.environ["OPENAI_API_KEY"] = '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'
+os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
 st.set_page_config(layout="wide")
 
