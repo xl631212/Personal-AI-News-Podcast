@@ -186,7 +186,7 @@ option = st.sidebar.selectbox(
 
 
 if option == 'English':
-    if st.sidebar.button('Generate LLM newsletter'):
+    if st.button('Generate LLM newsletter'):
         with st.sidebar.status("Generating newsletter..."):
             st.write("Searching for Openai Blog...")
             openai_blog = summarize_website_content("https://openai.com/blog")
