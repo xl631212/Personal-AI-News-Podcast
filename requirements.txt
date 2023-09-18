@@ -7,6 +7,8 @@ playwright
 tiktoken
 doctran
 langchain
+streamlit-on-Hover-tabs
+streamlit-multipage
 edge-tts
 HackerNews
 youtube-search-python
