@@ -4,6 +4,7 @@ streamlit
 gnews
 openai
 playwright
+tiktoken
 doctran
 langchain
 edge-tts
