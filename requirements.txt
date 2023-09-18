@@ -8,3 +8,5 @@ doctran
 langchain
 edge-tts
 HackerNews
+youtube-search-python
+youtube-transcript-api
