@@ -8,6 +8,6 @@ tiktoken
 doctran
 langchain
 edge-tts
-HackerNews
+arxiv
 youtube-search-python
 youtube-transcript-api
