@@ -2,7 +2,12 @@
 
 Stay Ahead leverages Large Language Models (LLM) and web scraping techniques to curate a real-time newsletter based on the latest updates, research, blogs, and discussions in the field of AI.
 
-![App Preview](https://www.groundzeroweb.com/wp-content/uploads/2017/05/Funny-Cat-Memes-11.jpg)
+## App Preview
+
+<p float="left">
+  <img src="截屏2023-09-19 23.10.09.png" width="49%" />
+  <img src="截屏2023-09-19 20.55.56.png" width="49%" />
+</p>
 
 ## Features:
 
