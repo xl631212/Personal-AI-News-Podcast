@@ -18,7 +18,7 @@ Stay Ahead leverages Large Language Models (LLM) and web scraping techniques to 
    - MIT AI News
    - Google News
 3. **Newsletter and Podcast Generation**: Not only presents written content but also converts it into an immersive audio experience.
-4. **Interactive User Interface**: (If applicable) Provides a user-friendly web interface for customizing content preferences.
+[TBD]4. **Interactive User Interface**: (If applicable) Provides a user-friendly web interface for customizing content preferences.
 
 ## How It Works:
 
