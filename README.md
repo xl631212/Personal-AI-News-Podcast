@@ -4,23 +4,24 @@ Stay Ahead leverages Large Language Models (LLM) and web scraping techniques to 
 
 ![App Preview](https://www.groundzeroweb.com/wp-content/uploads/2017/05/Funny-Cat-Memes-11.jpg)
 
-## Features
+## Features:
 
-- Real-time collection of the latest in LLM research, blogs, discussions, and news.
-- Summarizes and presents content from platforms including:
-  - [Openai Blog](#)
-  - [HackerNews](#)
-  - [BAIR Blog](https://bair.berkeley.edu/blog/)
-  - [MIT AI News](https://news.mit.edu/topic/artificial-intelligence2)
-  - [Google News](#)
-- Generates newsletters and supports text-to-speech functionalities for an audio-based experience.
-  
-## How It Works
+1. **Real-time Content Aggregation**: Gathers the freshest research, blogs, discussions, and news related to AI.
+2. **Wide Source Integration**: Summarizes content from esteemed platforms including:
+   - Openai Blog
+   - HackerNews
+   - BAIR Blog
+   - MIT AI News
+   - Google News
+3. **Newsletter and Podcast Generation**: Not only presents written content but also converts it into an immersive audio experience.
+4. **Interactive User Interface**: (If applicable) Provides a user-friendly web interface for customizing content preferences.
 
-1. The app uses web scraping utilities to collect data from various online sources.
-2. Gathers and summarizes articles using OpenAI's Chat Model.
-3. Generates a broadcast in the form of an audio file which users can listen to.
-4. Displays the summarized content from each source for a user-friendly reading experience.
+## How It Works:
+
+1. **Data Collection**: Uses web scraping tools to fetch information from a plethora of online AI sources.
+2. **Content Summarization**: Leverages OpenAI's Chat Model to condense and highlight crucial points from the aggregated content.
+3. **Audio Broadcast**: Produces an audio podcast, enabling users to listen on-the-go.
+4. **User-friendly Display**: Showcases the refined content in an easy-to-read format, ensuring a seamless user experience.
 
 ## Installation and Setup
 
