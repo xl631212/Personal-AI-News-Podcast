@@ -8,7 +8,7 @@ from gnews import GNews
 from datetime import datetime
 import edge_tts
 import subprocess
-from langchain.utilities import GoogleSerperAPIWrapper
+import arxiv
 from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.llms.openai import OpenAI
 from youtubesearchpython import *
@@ -32,7 +32,7 @@ system_message = '''
 
 system_message_2 = '''
                 You are a linguist, skilled in summarizing textual content and presenting it in 3 bullet points using markdown. 
-                no more than 150 words
+                no more than 150 words in total.
                 '''
 
 
@@ -303,15 +303,26 @@ def compute_page(st, **state):
     my_bar.progress(30, text="Searching for a16z Blog...")
     a16z_blog = summarize_website_content('https://a16z.simplecast.com/')
     
-    my_bar.progress(40, text=progress_text)
+    my_bar.progress(40, text='Searching for lexi friman boardcast...')
     lexi_boardcast = summarize_website_content('https://www.youtube.com/c/lexfridman')
+
+    my_bar.progress(50, text="Searching for arxiv ...")
+    search = arxiv.Search(
+        query = "AI, LLM",
+        max_results = 3,
+        sort_by = arxiv.SortCriterion.SubmittedDate
+    )
+    ariv_essay = ''
+    for result in search.results():
+        ariv_essay += result.summary
     
     my_bar.progress(60, text="Searching Google News...")
     google_news = fetch_gnews_links(query='AI LLM')
 
     my_bar.progress(80, text="Writing Newsletter...")
     query = 'news from google news' + str(google_news['summary']) + 'news from bair blog' + bair_blog + 'news from mit blog' + str(mit_blog) \
-             + 'news from a15z blog' + a16z_blog + 'news from lexi broadcast' + lexi_boardcast + 'news from openai blog: ' + openai_blog
+             + 'news from a15z blog' + a16z_blog + 'news from lexi broadcast' + lexi_boardcast + 'news from openai blog: ' + openai_blog + 'new arxiv essay' \
+             + ariv_essay
     
     query = query.replace('<|endoftext|>', '')
     messages =  [
@@ -350,7 +361,7 @@ def compute_page(st, **state):
     st.subheader('Summary and Commentary', divider='rainbow')
     st.markdown(summary)
 
-    st.subheader('Technology news', divider='rainbow')
+    st.subheader('Technology News', divider='rainbow')
     for i in range(len(google_news['title'])):
         st.markdown(f"### {google_news['title'][i]}\n")
         st.markdown(google_news['summary'][i])
@@ -362,15 +373,19 @@ def compute_page(st, **state):
     st.markdown(a16z_blog)
     st.markdown(f"[more on](https://a16z.simplecast.com/)\n")
     
-    st.subheader('Technology Blog', divider='green')
+    st.subheader('Technology Blogs', divider='green')
     st.markdown(openai_blog)
     st.markdown(f"[more on](https://openai.com/blog)\n")
     st.markdown(bair_blog)
     st.markdown(f"[more on](https://bair.berkeley.edu/blog/)\n")
     st.markdown(mit_blog)
     st.markdown(f"[more on](https://news.mit.edu/topic/artificial-intelligence2)\n")
-    
 
+    st.subheader('Arxiv Essay', divider='green')
+    for result in search.results():
+        st.markdown(f"### {result.title}\n")
+        st.markdown(result.summary)
+        st.markdown(f"[more on]({result.entry_id})\n")
 
 def page_one():
     input_page(st)
@@ -400,4 +415,3 @@ def main():
 if __name__ == "__main__":
     st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
     main()
-
