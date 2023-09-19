@@ -2,22 +2,28 @@ import openai
 import streamlit as st
 import os
 import pprint
-from langchain.utilities import GoogleSerperAPIWrapper
-from langchain.llms.openai import OpenAI
-from langchain.agents import initialize_agent, Tool
-from langchain.agents import AgentType
 import requests
 from bs4 import BeautifulSoup
-# from TTS.api import TTS
 from gnews import GNews
-from langchain.chat_models import ChatOpenAI
-from langchain.document_loaders import WebBaseLoader
-from langchain.chains.summarize import load_summarize_chain
 from datetime import datetime
 import edge_tts
 import subprocess
-
-current_date = datetime.now().date()
+from langchain.utilities import GoogleSerperAPIWrapper
+from langchain.utilities import GoogleSerperAPIWrapper
+from langchain.llms.openai import OpenAI
+from youtubesearchpython import *
+from youtube_transcript_api import YouTubeTranscriptApi
+from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
+from langchain.docstore.document import Document
+from langchain.llms.openai import OpenAI
+from langchain.chains.summarize import load_summarize_chain
+from langchain.chat_models import ChatOpenAI
+from langchain.agents import initialize_agent, Tool
+from langchain.agents import AgentType
+from hackernews import HackerNews
+from langchain.chat_models import ChatOpenAI
+from langchain.document_loaders import WebBaseLoader
+from langchain.chains.summarize import load_summarize_chain
 
 system_message = '''
                 You are a very talented news editor, skilled at consolidating 
@@ -25,11 +31,52 @@ system_message = '''
                 Compile the news article based on the information in 【】.  
                 '''
 
+system_message_2 = '''
+                You are a linguist, skilled in summarizing textual content and presenting it in 3 bullet points using markdown. 
+                no more than 150 words
+                '''
+
 
 os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
-st.set_page_config(layout="wide")
+
+
+def fetch_videos_from_channel(channel_id):
+    playlist = Playlist(playlist_from_channel_id(channel_id))
+    while playlist.hasMoreVideos:
+        playlist.getNextVideos()
+    return playlist.videos
+
+
+def get_transcript(video_id):
+    raw_data = YouTubeTranscriptApi.get_transcript(video_id)
+    texts = [item['text'] for item in raw_data]
+    return ' '.join(texts)
+
+
+def split_text_into_documents(long_string, max_docs=20):
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=20,
+        length_function=len,
+    )
+    texts = text_splitter.split_text(long_string)
+    docs = [Document(page_content=t) for t in texts[:max_docs]]
+
+    text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
+        chunk_size=500, chunk_overlap=0
+    )
+    split_docs = text_splitter.split_documents(docs)
+    return split_docs
+
+
+def summarize_documents(split_docs):
+    llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo-16k")
+    chain = load_summarize_chain(llm, chain_type="map_reduce")
+    summary = chain.run(split_docs)
+    return summary
+
 
 def get_completion_from_messages(messages,
                                  model="gpt-3.5-turbo-16k",
@@ -72,6 +119,8 @@ def fetch_gnews_links(query, language='en', country='US', period='1d', start_dat
       content['summary'].append(summarize_website_content(url))
 
     return content
+
+
 
 def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k", chain_type="stuff"):
     """
@@ -130,121 +179,226 @@ def heacker_news_content():
     return content
 
 
-def generate_tts_audio(text, output_file="output.wav"):
-    """
-    Generate audio from text using the first available TTS model and save to a file.
-
-    Parameters:
-    - text (str): The text to convert to speech.
-    - output_file (str): The file path where the audio should be saved. Default is "output.wav".
-
-    Returns:
-    - None
-    """
-
-    # Determine the computation device
-    # device = "cuda" if torch.cuda.is_available() else "cpu"
-    
-    # Get the first available TTS model
-    model_name = TTS().list_models()[0]
-    
-    # Initialize the TTS with the model
-    tts = TTS(model_name).to("cpu")
-    
-    # Convert text to speech and save to file
-    tts.tts_to_file(text=text, speaker=tts.speakers[0], language=tts.languages[0], file_path=output_file)
-
-
-
-st.title("Stay Ahead: Real-time News and Podcasts with LLM")
-st.sidebar.image("https://www.groundzeroweb.com/wp-content/uploads/2017/05/Funny-Cat-Memes-11.jpg", width=210)
-st.subheader(current_date)
-
-with st.sidebar.expander("About the App"):
+def input_page(st, **state):
+    st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: pink;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
     st.markdown("""
-        Dive deep into the forefront of Large Language Model (LLM) developments with **Stay Ahead**. Our platform delivers:
+    <h4 style='text-align: center; color: black;'>
+        Select <span style='color: red;'>⭕️</span> either of the modes at the bottom and double-click 👆 the button below. 
+        <br>
+        Wait for approximately <span style='color: blue;'>3 mins</span> to generate your personalized LLM podcast
+    </h4>
+    """, 
+    unsafe_allow_html=True)
 
-        - Real-time collection of the latest in LLM research, blogs, discussions, and news.
-        - Content sourced from esteemed platforms including:
-        - [Openai Blog](#)
-        - [HackerNews](#)
-        - [BAIR Blog](https://bair.berkeley.edu/blog/)
-        - [MIT AI News](https://news.mit.edu/topic/artificial-intelligence2)
-        - [Google News](#)
+
+
+    # Custom CSS to modify the button appearance
+    st.markdown("""
+    <style>
+        .stButton>button {
+            width: 40%;
+            height: 70px;
+            color: white;
+            background-color: pink;
+            border: none;
+            border-radius: 10px;
+            margin: auto;
+            font-weight: bold; 
+            font-size: 500px; 
+            display: flex;            /* Use flexbox */
+            justify-content: center;  /* Center children horizontally */
+            align-items: center;  
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <style>
+        .stRadio > div[role="radiogroup"] {
+            justify-content: center;
+        }
+        .stRadio > div[role="radiogroup"] > label{
+            font-size: 1000px !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <style>
+        .stSelectbox {
+            width: 10% !important;
+            margin-left: calc(50% - 20%) !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    button_placeholder = st.empty()
+
+    choice = st.radio(
+        "",
+        ["Auto-generation (recommended for first-time use)", "Advanced setting"],
+        key="visibility",
+        disabled=False,
+        horizontal=True,
+    )
+
+    language = st.selectbox(
+        "language",
+        ("English", "Spanish", "Chinese"),
+        label_visibility="visible",
+        disabled=False,
+    )
+
+    with button_placeholder:
+        # 添加按钮样式
+        st.markdown("""
+        <style>
+            .stButton > button {
+                width: 20%;
+                height: 70px;
+                color: white;
+                background-color: pink;
+                border: none;
+                border-radius: 10px;
+                margin: auto;
+                font-weight: bold; 
+                font-size: 70px; 
+                justify-content: center;
+                align-items: center;
+            }
+        </style>
+        """, unsafe_allow_html=True)
         
-        Personalize your experience:
-        - [WIP] Receive a curated markdown daily report tailored to your interests.
-        - Opt for our broadcast mode to stay updated via audio, making it easier than ever to keep pace with LLM advancements on-the-go.
+        # 创建按钮
+        if st.button("👆 Double-Click Generation"):
+            st.session_state.page = "two"
+            st.session_state.choice = choice
+            st.session_state.language = language
 
-        Discover, learn, and stay ahead with **This App**.
 
-        """)
+def compute_page(st, **state):
+    st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: pink;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+        /* This styles the main content excluding h1 and h2 */
+        #root .block-container {
+            width: 75%;
+            margin: auto;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+    radio_placeholder = st.empty()
+    progress_placeholder = st.empty()
+    progress_text = "Searching for Openai Blog..."
+    my_bar = progress_placeholder.progress(0, text=progress_text)
+    openai_blog = summarize_website_content("https://openai.com/blog")
+
+    my_bar.progress(10, text="Searching for BAIR Blog...")
+    bair_blog = summarize_website_content("https://bair.berkeley.edu/blog/")
+
+    my_bar.progress(20, text="Searching for MIT Blog...")
+    mit_blog = summarize_website_content('https://news.mit.edu/topic/artificial-intelligence2')
     
-option = st.sidebar.selectbox(
-    'Select language',
-    ('English', 'Chinese', 'Spanish'))
+    my_bar.progress(30, text="Searching for a16z Blog...")
+    a16z_blog = summarize_website_content('https://a16z.simplecast.com/')
+    
+    my_bar.progress(40, text=progress_text)
+    lexi_boardcast = summarize_website_content('https://www.youtube.com/c/lexfridman')
+    
+    my_bar.progress(60, text="Searching Google News...")
+    google_news = fetch_gnews_links(query='AI LLM')
+
+    my_bar.progress(80, text="Writing Newsletter...")
+    query = 'news from google news' + str(google_news['summary']) + 'news from bair blog' + bair_blog + 'news from mit blog' + str(mit_blog) \
+             + 'news from a15z blog' + a16z_blog + 'news from lexi broadcast' + lexi_boardcast + 'news from openai blog: ' + openai_blog
+    
+    query = query.replace('<|endoftext|>', '')
+    messages =  [
+                    {'role':'system',
+                    'content': system_message},
+                    {'role':'user',
+                    'content': f"【{query}】"},]
+    response = get_completion_from_messages(messages)
+
+    my_bar.progress(90, text="Generating Podcast...")
+    my_bar.empty()
+
+    updated_text = response
+    # 构建 edge-tts 命令
+    command = f'edge-tts --text "{updated_text}" --write-media hello.mp3'
+    # 使用 subprocess 运行命令
+    subprocess.run(command, shell=True)
+
+    my_bar.progress(90, text="Generating Summary...")
+    my_bar.empty()
+
+    query = response
+    messages =  [
+                    {'role':'system',
+                    'content': system_message_2},
+                    {'role':'user',
+                    'content': f"【{query}】"},]
+    summary = get_completion_from_messages(messages)
 
 
-if option == 'English':
-    if st.button('Generate LLM newsletter'):
-        with st.sidebar.status("Generating newsletter..."):
-            st.write("Searching for Openai Blog...")
-            openai_blog = summarize_website_content("https://openai.com/blog")
-            st.write("Searching for BAIR Blog...")
-            bair_blog = summarize_website_content("https://bair.berkeley.edu/blog/")
-            st.write("Searching for MIT Blog...")
-            mit_blog = summarize_website_content('https://news.mit.edu/topic/artificial-intelligence2')
-            st.write("Searching Google News...")
-            google_news = fetch_gnews_links(query='AI LLM')
-            st.write("Writing Newsletter...")
-            query = 'news from google news' + str(google_news['summary']) + 'news from openai blog: ' + openai_blog + 'news from bair blog' + bair_blog + 'news from mit blog' + str(mit_blog)
-                 
-            query = query.replace('<|endoftext|>', '')
-            user_message = query
-            messages =  [
-                        {'role':'system',
-                            'content': system_message},
-                        {'role':'user',
-                            'content': f"【{query}】"},]
-            response = get_completion_from_messages(messages)
-            st.write("Generating boardcast...")
-            TEXT = response
-            VOICE = "en-GB-SoniaNeural"
-            updated_text = response
-            # 构建 edge-tts 命令
-            command = f'edge-tts --text "{updated_text}" --write-media hello.mp3'
-
-            # 使用 subprocess 运行命令
-            subprocess.run(command, shell=True)
-
-        st.subheader('News Broadcast', divider='red')
+    with radio_placeholder:
         audio_file = open('hello.mp3', 'rb')
         audio_bytes = audio_file.read()
-
-
         st.audio(audio_bytes, format='wav')
-        with st.sidebar.expander("See the full news script"):
-            st.markdown(response)
 
-        st.subheader('Google news', divider='rainbow')
-        for i in range(len(google_news['title'])):
-            st.markdown(f"### {google_news['title'][i]}\n")
-            st.markdown(google_news['summary'][i])
-            st.markdown(f"[more on]({google_news['url'][i]})\n")
-        
-        st.subheader('Openai blog', divider='green')
-        st.markdown(openai_blog)
-        st.markdown(f"[more on](https://openai.com/blog)\n")
+    st.subheader('Summary and Commentary', divider='rainbow')
+    st.markdown(summary)
 
-        st.subheader('BAIR blog', divider='blue')
-        st.markdown(bair_blog)
-        st.markdown(f"[more on](https://bair.berkeley.edu/blog/)\n")
+    st.subheader('Technology news', divider='rainbow')
+    for i in range(len(google_news['title'])):
+        st.markdown(f"### {google_news['title'][i]}\n")
+        st.markdown(google_news['summary'][i])
+        st.markdown(f"[more on]({google_news['url'][i]})\n")
 
-        st.subheader('MIT blog', divider='gray')
-        st.markdown(mit_blog)
-        st.markdown(f"[more on](https://news.mit.edu/topic/artificial-intelligence2)\n")
+    st.subheader('Podcast and Speeches', divider='orange')
+    st.markdown(lexi_boardcast)
+    st.markdown(f"[more on](https://www.youtube.com/c/lexfridman)\n")
+    st.markdown(a16z_blog)
+    st.markdown(f"[more on](https://a16z.simplecast.com/)\n")
+    
+    st.subheader('Technology Blog', divider='green')
+    st.markdown(openai_blog)
+    st.markdown(f"[more on](https://openai.com/blog)\n")
+    st.markdown(bair_blog)
+    st.markdown(f"[more on](https://bair.berkeley.edu/blog/)\n")
+    st.markdown(mit_blog)
+    st.markdown(f"[more on](https://news.mit.edu/topic/artificial-intelligence2)\n")
+    
 
-else:
-    st.subheader('Work in Progress', divider='rainbow')
 
+def page_one():
+    input_page(st)
+
+def page_two():
+    compute_page(st)
+
+
+def main():
+    # 初始化session状态
+    if "page" not in st.session_state:
+        st.session_state.page = "one"
+
+    if "choice" not in st.session_state:
+        st.session_state.choice = ""
+    
+    if "language" not in st.session_state:
+        st.session_state.language = ""
+
+
+    # 根据session状态来渲染页面
+    if st.session_state.page == "one":
+        page_one()
+    elif st.session_state.page == "two":
+        page_two()
+
+if __name__ == "__main__":
+    st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
+    main()
 
