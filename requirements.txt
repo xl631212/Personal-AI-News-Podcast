@@ -9,6 +9,7 @@ doctran
 langchain
 streamlit-on-Hover-tabs
 streamlit-multipage
+streamlit-pages
 edge-tts
 HackerNews
 youtube-search-python
