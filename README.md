@@ -5,7 +5,7 @@ Stay Ahead leverages Large Language Models (LLM) and web scraping techniques to 
 ## App Preview
 
 <p float="left">
-  <img src="截屏2023-09-19 23.10.09.png" width="100%" />
+  <img src="截屏2023-09-20 09.20.03.png" width="100%" />
 </p>
 
 ## Features:
