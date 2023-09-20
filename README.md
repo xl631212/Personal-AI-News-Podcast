@@ -42,15 +42,15 @@ Stay Ahead leverages Large Language Models (LLM) and web scraping techniques to 
 
 As we continue to improve Stay Ahead, we have several exciting features and enhancements lined up:
 
-1. **Add More Information Sources**: We plan to integrate even more data sources to provide a comprehensive view of the latest developments in the field of AI.
+- [ ] **Add More Information Sources**: Integrate even more data sources to provide a comprehensive view of the latest developments in the field of AI.
    
-2. **Advanced Settings**: We're working on giving users more control over their podcast experience with:
-   - **2.1 Voice Duration**: Adjust the speed and length of the audio to fit your schedule.
-   - **2.2 Linguistic Style**: Choose between formal, casual, or other voice styles to match your preference.
-   - **2.3 Language Selection**: Multiple language options to cater to our diverse user base.
-   - **2.4 Source Filtering**: Select and prioritize the sources you're most interested in.
+- [ ] **Advanced Settings**: Give users more control over their podcast experience with:
+   - [ ] **2.1 Voice Duration**: Adjust the speed and length of the audio to fit your schedule.
+   - [ ] **2.2 Linguistic Style**: Choose between formal, casual, or other voice styles to match your preference.
+   - [ ] **2.3 Language Selection**: Multiple language options to cater to our diverse user base.
+   - [ ] **2.4 Source Filtering**: Select and prioritize the sources you're most interested in.
    
-3. **User Feedback Functionality**: To ensure we're meeting the needs and expectations of our users, we will be implementing a direct feedback mechanism within the app. Your insights will be invaluable in guiding our future developments!
+- [ ] **User Feedback Functionality**: Implement a direct feedback mechanism within the app to gather invaluable insights from users.
 
 Stay tuned for these updates and more as we strive to make Stay Ahead your go-to AI news and podcast platform.
 
