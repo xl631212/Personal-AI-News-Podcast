@@ -196,7 +196,12 @@ def heacker_news_content():
 
 
 def input_page(st, **state):
-    st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: #FF4B4B;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
+    st.markdown("""
+      <h1 style='text-align: center; color: black;'>
+        LLM <span style='color: #FF4B4B; font-size: 0.85em;'>Personal Podcast</span>
+      </h1>
+      """, 
+      unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
     st.markdown("""
       <h4 style='text-align: center; color: black;'>
@@ -293,7 +298,12 @@ def input_page(st, **state):
 
 
 def compute_page(st, **state):
-    st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: #FF4B4B;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
+    st.markdown("""
+      <h1 style='text-align: center; color: black;'>
+          LLM <span style='color: #FF4B4B; font-size: 0.85em;'>Personal Podcast</span>
+      </h1>
+      """, 
+      unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
     st.markdown("""
     <style>
