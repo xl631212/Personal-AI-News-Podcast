@@ -196,9 +196,9 @@ def heacker_news_content():
 
 
 def input_page(st, **state):
-    st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: pink;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
-    st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
-    st.markdown("""
+  st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: #FF4B4B;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
+  st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
+  st.markdown("""
     <h4 style='text-align: center; color: black;'>
         Select <span style='color: red;'>⭕️</span> either of the modes at the bottom and double-click 👆 the button below. 
         <br>
@@ -216,7 +216,7 @@ def input_page(st, **state):
             width: 40%;
             height: 70px;
             color: white;
-            background-color: pink;
+            background-color: #FF4B4B;
             border: none;
             border-radius: 10px;
             margin: auto;
@@ -276,7 +276,7 @@ def input_page(st, **state):
                 width: 20%;
                 height: 70px;
                 color: white;
-                background-color: pink;
+                background-color: #FF4B4B;
                 border: none;
                 border-radius: 10px;
                 margin: auto;
@@ -296,7 +296,7 @@ def input_page(st, **state):
 
 
 def compute_page(st, **state):
-    st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: pink;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: #FF4B4B;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
     st.markdown("""
     <style>
@@ -380,7 +380,7 @@ def compute_page(st, **state):
     st.subheader('Summary and Commentary', divider='rainbow')
     st.markdown(summary)
 
-    st.subheader('Technology News', divider='rainbow')
+    st.subheader('Technology News', divider='red')
     for i in range(len(google_news['title'])):
         st.markdown(f"### {google_news['title'][i]}\n")
         st.markdown(google_news['summary'][i])
@@ -400,7 +400,7 @@ def compute_page(st, **state):
     st.markdown(mit_blog)
     st.markdown(f"[more on](https://news.mit.edu/topic/artificial-intelligence2)\n")
 
-    st.subheader('Arxiv Essay', divider='green')
+    st.subheader('Arxiv Essay', divider='grey')
     for result in search.results():
         st.markdown(f"### {result.title}\n")
         st.markdown(result.summary)
