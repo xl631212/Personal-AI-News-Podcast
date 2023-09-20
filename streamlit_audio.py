@@ -1,5 +1,3 @@
-import openai
-import streamlit as st
 import os
 import pprint
 import requests
@@ -7,8 +5,10 @@ from bs4 import BeautifulSoup
 from gnews import GNews
 from datetime import datetime
 import edge_tts
-import subprocess
 import arxiv
+import subprocess
+import base64
+from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.llms.openai import OpenAI
 from youtubesearchpython import *
@@ -20,6 +20,7 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain.chat_models import ChatOpenAI
 from langchain.agents import initialize_agent, Tool
 from langchain.agents import AgentType
+from hackernews import HackerNews
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
@@ -68,6 +69,21 @@ def split_text_into_documents(long_string, max_docs=20):
     )
     split_docs = text_splitter.split_documents(docs)
     return split_docs
+
+
+def autoplay_audio(file_path: str):
+    with open(file_path, "rb") as f:
+        data = f.read()
+        b64 = base64.b64encode(data).decode()
+        md = f"""
+            <audio controls autoplay="true" style="width: 100%;">
+            <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+            </audio>
+            """
+        st.markdown(
+            md,
+            unsafe_allow_html=True,
+        )
 
 
 def summarize_documents(split_docs):
@@ -242,6 +258,8 @@ def input_page(st, **state):
         horizontal=True,
     )
 
+
+
     language = st.selectbox(
         "language",
         ("English", "Spanish", "Chinese"),
@@ -333,7 +351,6 @@ def compute_page(st, **state):
     response = get_completion_from_messages(messages)
 
     my_bar.progress(90, text="Generating Podcast...")
-    my_bar.empty()
 
     updated_text = response
     # 构建 edge-tts 命令
@@ -342,7 +359,6 @@ def compute_page(st, **state):
     subprocess.run(command, shell=True)
 
     my_bar.progress(90, text="Generating Summary...")
-    my_bar.empty()
 
     query = response
     messages =  [
@@ -351,13 +367,15 @@ def compute_page(st, **state):
                     {'role':'user',
                     'content': f"【{query}】"},]
     summary = get_completion_from_messages(messages)
-
+    my_bar.progress(100, text="Almost there...")
 
     with radio_placeholder:
-        audio_file = open('hello.mp3', 'rb')
-        audio_bytes = audio_file.read()
-        st.audio(audio_bytes, format='wav')
+        #audio_file = open('hello.mp3', 'rb')
+        #audio_bytes = audio_file.read()
+        #st.audio(audio_bytes, format='wav')
+        autoplay_audio("hello.mp3")
 
+    my_bar.empty()
     st.subheader('Summary and Commentary', divider='rainbow')
     st.markdown(summary)
 
