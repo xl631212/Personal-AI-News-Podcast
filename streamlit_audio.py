@@ -198,7 +198,7 @@ def heacker_news_content():
 def input_page(st, **state):
     st.markdown("""
       <h1 style='text-align: center; color: black;'>
-        LLM <span style='color: #FF4B4B; font-size: 0.85em;'>Personal Podcast</span>
+        LLM <span style='color: #e36868; font-size: 0.85em;'>Personal Podcast</span>
       </h1>
       """, 
       unsafe_allow_html=True)
@@ -218,7 +218,7 @@ def input_page(st, **state):
             width: 40%;
             height: 70px;
             color: white;
-            background-color: #FF4B4B;
+            background-color: #e36868;
             border: none;
             border-radius: 10px;
             margin: auto;
@@ -278,7 +278,7 @@ def input_page(st, **state):
                 width: 20%;
                 height: 70px;
                 color: white;
-                background-color: #FF4B4B;
+                background-color: #e36868;
                 border: none;
                 border-radius: 10px;
                 margin: auto;
@@ -300,7 +300,7 @@ def input_page(st, **state):
 def compute_page(st, **state):
     st.markdown("""
       <h1 style='text-align: center; color: black;'>
-          LLM <span style='color: #FF4B4B; font-size: 0.85em;'>Personal Podcast</span>
+          LLM <span style='color: #e36868; font-size: 0.85em;'>Personal Podcast</span>
       </h1>
       """, 
       unsafe_allow_html=True)
