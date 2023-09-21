@@ -261,14 +261,18 @@ def input_page(st, **state):
         horizontal=True,
     )
 
-
+    st.markdown("""
+        <style>
+            .stSelectbox {
+                width: 30% !important;
+                margin: 0 auto !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
 
     language = st.selectbox(
-        "language",
-        ("English", "Spanish", "Chinese"),
-        label_visibility="visible",
-        disabled=False,
-    )
+        "Language",  # Removing the label here as we manually placed it in the left column
+        ("English", "Spanish", "Chinese"))
 
     with button_placeholder:
         # 添加按钮样式
