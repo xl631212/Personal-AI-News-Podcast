@@ -204,13 +204,13 @@ def input_page(st, **state):
       unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
     st.markdown("""
-      <h4 style='text-align: center; color: black;'>
-          Select <span style='color: red;'>⭕️</span> either of the modes at the bottom and double-click 👆 the button below. 
-          <br>
-          Wait for approximately <span style='color: blue;'>3 mins</span> to generate your personalized LLM podcast
-      </h4>
-      """, 
-      unsafe_allow_html=True)
+    <h4 style='text-align: center; color: black;'>
+        Select <span style='color: red;'>⭕️</span> either of the modes at the bottom and double-click 👆 the button below. 
+        <br>
+        Wait for approximately <span style='color: blue; font-size: 1.2em;'>3 mins</span> to generate your personalized LLM podcast
+    </h4>
+    """, 
+    unsafe_allow_html=True)
     # Custom CSS to modify the button appearance
     st.markdown("""
     <style>
