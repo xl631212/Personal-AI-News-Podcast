@@ -407,7 +407,7 @@ def compute_page(st, **state):
     st.markdown(mit_blog)
     st.markdown(f"[more on](https://news.mit.edu/topic/artificial-intelligence2)\n")
 
-    st.subheader('Arxiv Essay', divider='grey')
+    st.subheader('Cutting-edge Papers', divider='grey')
     for result in search.results():
         st.markdown(f"### {result.title}\n")
         st.markdown(result.summary)
