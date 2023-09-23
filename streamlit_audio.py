@@ -322,7 +322,7 @@ def compute_page(st, **state):
     progress_placeholder = st.empty()
     progress_text = "Searching for Openai Blog..."
     my_bar = progress_placeholder.progress(0, text=progress_text)
-    openai_blog = summarize_website_content("https://openai.com/blog")
+    openai_blog = summarize_website_content("https://openai.com/")
 
     my_bar.progress(10, text="Searching for BAIR Blog...")
     bair_blog = summarize_website_content("https://bair.berkeley.edu/blog/")
