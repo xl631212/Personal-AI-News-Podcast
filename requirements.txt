@@ -9,5 +9,6 @@ doctran
 langchain
 edge-tts
 arxiv
+twint
 youtube-search-python
 youtube-transcript-api
