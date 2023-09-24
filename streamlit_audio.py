@@ -329,7 +329,7 @@ def input_page(st, **state):
                 )
                 time_period = st.selectbox(
                     'In a period of',
-                    ['Today', 'Yesterday'],
+                    ['Today', ' '],
                     key='opt4'
                 )
                 st.markdown("</div>", unsafe_allow_html=True)
