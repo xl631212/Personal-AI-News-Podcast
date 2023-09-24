@@ -36,12 +36,13 @@ system_message_2 = '''
                 You are a linguist, skilled in summarizing textual content and presenting it in 3 bullet points using markdown. 
                 no more than 150 words in total.
                 '''
-
+system_message_3 = '''
+                你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
+                '''
 
 os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
-
 
 def fetch_videos_from_channel(channel_id):
     playlist = Playlist(playlist_from_channel_id(channel_id))
@@ -197,11 +198,12 @@ def heacker_news_content():
 
 def input_page(st, **state):
     st.markdown("""
-      <h1 style='text-align: center; color: black;'>
-        LLM <span style='color: #f56e6e; font-size: 0.85em;'>Personal Podcast</span>
-      </h1>
-      """, 
-      unsafe_allow_html=True)
+    <h1 style='text-align: center; color: black;'>
+        LLM <span style='color: #FF4B4B; font-size: 0.85em;'>Personal Podcast</span>
+    </h1>
+    """, 
+    unsafe_allow_html=True
+    )
     st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
     st.markdown("""
     <h4 style='text-align: center; color: black;'>
@@ -211,6 +213,8 @@ def input_page(st, **state):
     </h4>
     """, 
     unsafe_allow_html=True)
+
+
     # Custom CSS to modify the button appearance
     st.markdown("""
     <style>
@@ -218,7 +222,7 @@ def input_page(st, **state):
             width: 40%;
             height: 70px;
             color: white;
-            background-color: #f56e6e;
+            background-color: #FF4B4B;
             border: none;
             border-radius: 10px;
             margin: auto;
@@ -260,7 +264,6 @@ def input_page(st, **state):
         disabled=False,
         horizontal=True,
     )
-
     st.markdown("""
         <style>
             .stSelectbox {
@@ -269,10 +272,72 @@ def input_page(st, **state):
             }
         </style>
         """, unsafe_allow_html=True)
+    
+    language_placeholder = st.empty()
+    with language_placeholder:
+        language = st.selectbox(
+            "Language",  # Removing the label here as we manually placed it in the left column
+            ("English",  "中文"))
+    
 
-    language = st.selectbox(
-        "Language",  # Removing the label here as we manually placed it in the left column
-        ("English", "Spanish", "Chinese"))
+    if choice == 'Advanced setting':
+        language_placeholder.empty()
+        # CSS to adjust column content alignment and container width
+        st.markdown("""
+        <style>
+            .centered-container {
+                width: 40% !important;
+                margin: 0 auto !important;
+            }
+
+            .col1-content {
+                text-align: right !important;
+            }
+            .col2-content {
+                text-align: left !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # Using a container to center content
+        with st.container():
+            st.markdown("<div class='centered-container'>", unsafe_allow_html=True)
+            
+            col1, col2 = st.columns([3,4])
+
+            with col1:
+                st.markdown("<div class='col1-content'>", unsafe_allow_html=True)
+                language = st.selectbox(
+                    "Language",
+                    ("English", "中文"),
+                    key='ahaha'
+                )
+                audio_length = st.selectbox(
+                    'Audio Length',
+                    ['1 min', '3 min', '5 min'],
+                    key='opt2'
+                )
+                st.session_state.audio_length = audio_length
+                st.markdown("</div>", unsafe_allow_html=True)
+            
+            with col2:
+                st.markdown("<div class='col2-content'>", unsafe_allow_html=True)
+                options_2 = st.selectbox(
+                    'In a tone of',
+                    ['News', 'Enthusiastic', 'Humor'],
+                    key='opt3'
+                )
+                time_period = st.selectbox(
+                    'In a period of',
+                    ['Today', 'Yesterday'],
+                    key='opt4'
+                )
+                st.markdown("</div>", unsafe_allow_html=True)
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+
+
 
     with button_placeholder:
         # 添加按钮样式
@@ -282,7 +347,7 @@ def input_page(st, **state):
                 width: 20%;
                 height: 70px;
                 color: white;
-                background-color: #f56e6e;
+                background-color: #FF4B4B;
                 border: none;
                 border-radius: 10px;
                 margin: auto;
@@ -302,12 +367,7 @@ def input_page(st, **state):
 
 
 def compute_page(st, **state):
-    st.markdown("""
-      <h1 style='text-align: center; color: black;'>
-          LLM <span style='color: #f56e6e; font-size: 0.85em;'>Personal Podcast</span>
-      </h1>
-      """, 
-      unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: #FF4B4B;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
     st.markdown("""
     <style>
@@ -330,15 +390,12 @@ def compute_page(st, **state):
     my_bar.progress(20, text="Searching for MIT Blog...")
     mit_blog = summarize_website_content('https://news.mit.edu/topic/artificial-intelligence2')
     
-    my_bar.progress(30, text="Searching for a16z Blog...")
-    a16z_blog = summarize_website_content('https://a16z.simplecast.com/')
-    
     my_bar.progress(40, text='Searching for lexi friman boardcast...')
-    lexi_boardcast = summarize_website_content('https://www.youtube.com/c/lexfridman')
+    lexi_boardcast = summarize_website_content('https://lexfridman.com/podcast/')
 
     my_bar.progress(50, text="Searching for arxiv ...")
     search = arxiv.Search(
-        query = "AI, LLM",
+        query = "AI, LLM, machine learning",
         max_results = 3,
         sort_by = arxiv.SortCriterion.SubmittedDate
     )
@@ -347,11 +404,11 @@ def compute_page(st, **state):
         ariv_essay += result.summary
     
     my_bar.progress(60, text="Searching Google News...")
-    google_news = fetch_gnews_links(query='AI LLM')
+    google_news = fetch_gnews_links(query='AI, LLM, Machine learning')
 
     my_bar.progress(80, text="Writing Newsletter...")
     query = 'news from google news' + str(google_news['summary']) + 'news from bair blog' + bair_blog + 'news from mit blog' + str(mit_blog) \
-             + 'news from a15z blog' + a16z_blog + 'news from lexi broadcast' + lexi_boardcast + 'news from openai blog: ' + openai_blog + 'new arxiv essay' \
+             + 'news from lexi broadcast' + lexi_boardcast + 'news from openai blog: ' + openai_blog + 'new arxiv essay' \
              + ariv_essay
     
     query = query.replace('<|endoftext|>', '')
@@ -363,22 +420,38 @@ def compute_page(st, **state):
     response = get_completion_from_messages(messages)
 
     my_bar.progress(90, text="Generating Podcast...")
+    if st.session_state.language == 'English':
+        updated_text = response
+        # 构建 edge-tts 命令
+        command = f'edge-tts --text "{updated_text}" --write-media hello.mp3'
+        # 使用 subprocess 运行命令
+        subprocess.run(command, shell=True)
 
-    updated_text = response
-    # 构建 edge-tts 命令
-    command = f'edge-tts --text "{updated_text}" --write-media hello.mp3'
-    # 使用 subprocess 运行命令
-    subprocess.run(command, shell=True)
+        my_bar.progress(90, text="Generating Summary...")
 
-    my_bar.progress(90, text="Generating Summary...")
+        query = response
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_2 + "keep it within {} minutes.".format(st.session_state.audio_length)},
+                        {'role':'user',
+                        'content': f"【{query}】"},]
+        summary = get_completion_from_messages(messages)
+    
+    else:
+        before = response
+        summary = before.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{summary}】"},]
+        after = get_completion_from_messages(messages)
+        # 构建 edge-tts 命令
+        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello.mp3'
+        # 使用 subprocess 运行命令
+        subprocess.run(command, shell=True)
 
-    query = response
-    messages =  [
-                    {'role':'system',
-                    'content': system_message_2},
-                    {'role':'user',
-                    'content': f"【{query}】"},]
-    summary = get_completion_from_messages(messages)
+
     my_bar.progress(100, text="Almost there...")
 
     with radio_placeholder:
@@ -388,34 +461,130 @@ def compute_page(st, **state):
         autoplay_audio("hello.mp3")
 
     my_bar.empty()
-    st.subheader('Summary and Commentary', divider='rainbow')
-    st.markdown(summary)
+    if st.session_state.language == 'English':
+        st.subheader('Summary and Commentary', divider='rainbow')
+        st.markdown(summary)
 
-    st.subheader('Technology News', divider='red')
-    for i in range(len(google_news['title'])):
-        st.markdown(f"### {google_news['title'][i]}\n")
-        st.markdown(google_news['summary'][i])
-        st.markdown(f"[more on]({google_news['url'][i]})\n")
+        st.subheader('Technology News', divider='rainbow')
+        for i in range(len(google_news['title'])):
+            st.markdown(f"### {google_news['title'][i]}\n")
+            st.markdown(google_news['summary'][i])
+            st.markdown(f"[more on]({google_news['url'][i]})\n")
 
-    st.subheader('Podcast and Speeches', divider='orange')
-    st.markdown(lexi_boardcast)
-    st.markdown(f"[more on](https://www.youtube.com/c/lexfridman)\n")
-    st.markdown(a16z_blog)
-    st.markdown(f"[more on](https://a16z.simplecast.com/)\n")
-    
-    st.subheader('Technology Blogs', divider='green')
-    st.markdown(openai_blog)
-    st.markdown(f"[more on](https://openai.com/blog)\n")
-    st.markdown(bair_blog)
-    st.markdown(f"[more on](https://bair.berkeley.edu/blog/)\n")
-    st.markdown(mit_blog)
-    st.markdown(f"[more on](https://news.mit.edu/topic/artificial-intelligence2)\n")
+        st.subheader('Podcast and Speeches', divider='orange')
+        st.markdown(lexi_boardcast)
+        st.markdown(f"[more on](https://www.youtube.com/@lexfridman/videos)\n")
+        
+        st.subheader('Technology Blogs', divider='green')
+        st.markdown(openai_blog)
+        st.markdown(f"[more on](https://openai.com/blog)\n")
+        st.markdown(bair_blog)
+        st.markdown(f"[more on](https://bair.berkeley.edu/blog/)\n")
+        st.markdown(mit_blog)
+        st.markdown(f"[more on](https://news.mit.edu/topic/artificial-intelligence2)\n")
 
-    st.subheader('Cutting-edge Papers', divider='grey')
-    for result in search.results():
-        st.markdown(f"### {result.title}\n")
-        st.markdown(result.summary)
-        st.markdown(f"[more on]({result.entry_id})\n")
+        st.subheader('Cutting-edge Papers', divider='green')
+        for result in search.results():
+            st.markdown(f"### {result.title}\n")
+            st.markdown(result.summary)
+            st.markdown(f"[more on]({result.entry_id})\n")
+
+    elif st.session_state.language == '中文':
+        st.subheader('摘要与评论', divider='rainbow')
+        summary = summary.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{summary}】"},]
+        summary = get_completion_from_messages(messages)
+        st.markdown(summary)
+
+        st.subheader('科技新闻', divider='rainbow')
+        for i in range(len(google_news['title'])):
+            title = google_news['title'][i]
+            messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{title}】"},]
+            
+            title = get_completion_from_messages(messages)
+            news_summary = google_news['summary'][i]
+            messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{news_summary}】"},]
+            news_summary = get_completion_from_messages(messages)
+            st.markdown(f"### {title}\n")
+            st.markdown(news_summary)
+            st.markdown(f"[more on]({google_news['url'][i]})\n")
+
+        st.subheader('播客与演讲', divider='orange')
+        lexi_boardcast = lexi_boardcast.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{lexi_boardcast}】"},]
+        lexi_boardcast = get_completion_from_messages(messages)
+        st.markdown(lexi_boardcast)
+        st.markdown(f"[more on](https://www.youtube.com/@lexfridman/videos)\n")
+        
+        st.subheader('科技博客', divider='green')
+        openai_blog = openai_blog.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{openai_blog}】"},]
+        openai_blog = get_completion_from_messages(messages)
+        st.markdown(openai_blog)
+        st.markdown(f"[more on](https://openai.com/)\n")
+
+        bair_blog = bair_blog.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{bair_blog}】"},]
+        bair_blog = get_completion_from_messages(messages)
+        st.markdown(bair_blog)
+        st.markdown(f"[more on](https://bair.berkeley.edu/blog/)\n")
+
+        mit_blog = mit_blog.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{mit_blog}】"},]
+        mit_blog = get_completion_from_messages(messages)
+        st.markdown(mit_blog)
+        st.markdown(f"[more on](https://news.mit.edu/topic/artificial-intelligence2)\n")
+
+        st.subheader('尖端论文', divider='green')
+        for result in search.results():
+            title = result.title
+            result_summary = result.summary
+            messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{title}】"},]
+            result_title = get_completion_from_messages(messages)
+
+            messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{result_summary}】"},]
+            result_summary = get_completion_from_messages(messages)
+
+            st.markdown(f"### {result_title}\n")
+            st.markdown(result_summary)
+            st.markdown(f"[more on]({result.entry_id})\n")
+
 
 def page_one():
     input_page(st)
@@ -434,6 +603,10 @@ def main():
     
     if "language" not in st.session_state:
         st.session_state.language = ""
+
+    if "audio_length" not in st.session_state:
+        st.session_state.audio_length = '5'
+    
 
 
     # 根据session状态来渲染页面
