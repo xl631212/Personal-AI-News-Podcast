@@ -26,6 +26,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
 
+
 system_message = '''
                 You are a very talented news editor, skilled at consolidating 
                 fragmented information and introductions into a cohesive news script, without missing any details.
@@ -34,15 +35,13 @@ system_message = '''
 
 system_message_2 = '''
                 You are a linguist, skilled in summarizing textual content and presenting it in 3 bullet points using markdown. 
-                no more than 150 words in total.
                 '''
+
 system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
 
-os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
-os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
-openai.api_key = os.environ["OPENAI_API_KEY"]
+
 
 def fetch_videos_from_channel(channel_id):
     playlist = Playlist(playlist_from_channel_id(channel_id))
@@ -78,7 +77,7 @@ def autoplay_audio(file_path: str):
         data = f.read()
         b64 = base64.b64encode(data).decode()
         md = f"""
-            <audio controls autoplay="true" style="width: 100%;">
+            <audio controls style="width: 100%;">
             <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
             </audio>
             """
@@ -87,6 +86,23 @@ def autoplay_audio(file_path: str):
             unsafe_allow_html=True,
         )
 
+def get_h1_from_url(url):
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # 根据class查找<h1>标签
+        h1_tag = soup.find("h1", class_="f-display-2")
+        if h1_tag:
+            return h1_tag.text
+        else:
+            print("Couldn't find the <h1> tag with the specified class on the page.")
+            return None
+    else:
+        print(f"Failed to fetch the webpage. Status code: {response.status_code}")
+        return None
+    
 
 def summarize_documents(split_docs):
     llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo-16k")
@@ -167,6 +183,51 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     summarized_content = chain.run(docs)
 
     return summarized_content
+
+def get_latest_openai_blog_url():
+    base_url = "https://openai.com"
+    blog_url = f"{base_url}/blog"
+
+    response = requests.get(blog_url)
+
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # 查找具有特定类名的<a>标签
+        target_link = soup.find("a", class_="ui-link group relative cursor-pointer") 
+        if target_link:
+            # Combining base URL with the relative path
+            post_url = base_url + target_link['href']
+            return post_url
+        else:
+            print("Couldn't find the target post URL.")
+            return None
+    else:
+        print(f"Failed to fetch the webpage. Status code: {response.status_code}")
+        return None
+
+def extract_blog_link_info(url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.3'
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        return None, None
+
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    # 由于网站可能有多个这样的链接，我们只选择第一个匹配的项
+    link_element = soup.find('a', class_='f-post-link')
+
+    if link_element:
+        text_content = link_element.h3.text.strip()
+        href_link = link_element['href']
+        return text_content, href_link
+    else:
+        return None, None
+
 
 def get_all_text_from_url(url):
     # Fetch the content using requests
@@ -329,7 +390,7 @@ def input_page(st, **state):
                 )
                 time_period = st.selectbox(
                     'In a period of',
-                    ['Today', ' '],
+                    ['Today', 'Yesterday'],
                     key='opt4'
                 )
                 st.markdown("</div>", unsafe_allow_html=True)
@@ -343,27 +404,29 @@ def input_page(st, **state):
         # 添加按钮样式
         st.markdown("""
         <style>
-            .stButton > button {
-                width: 20%;
-                height: 70px;
+            .stButton button {
+                font-size:50px;
+                width: 10%;
+                box-sizing: 5%;
+                height: 30em;
                 color: white;
                 background-color: #FF4B4B;
                 border: none;
                 border-radius: 10px;
                 margin: auto;
                 font-weight: bold; 
-                font-size: 70px; 
                 justify-content: center;
                 align-items: center;
             }
         </style>
         """, unsafe_allow_html=True)
-        
+            
         # 创建按钮
         if st.button("👆 Double-Click Generation"):
             st.session_state.page = "two"
             st.session_state.choice = choice
             st.session_state.language = language
+        
 
 
 def compute_page(st, **state):
@@ -382,13 +445,18 @@ def compute_page(st, **state):
     progress_placeholder = st.empty()
     progress_text = "Searching for Openai Blog..."
     my_bar = progress_placeholder.progress(0, text=progress_text)
-    openai_blog = summarize_website_content("https://openai.com/")
+    openai_blog_url = get_latest_openai_blog_url()
+    if openai_blog_url:
+        openai_title = get_h1_from_url(openai_blog_url)
+        openai_blog = summarize_website_content(openai_blog_url)
 
-    my_bar.progress(10, text="Searching for BAIR Blog...")
-    bair_blog = summarize_website_content("https://bair.berkeley.edu/blog/")
+    my_bar.progress(10, text="Searching for Microsoft Blog...")
+    url = "https://blogs.microsoft.com/"
+    M_title, link = extract_blog_link_info(url)
+    bair_blog = summarize_website_content(link)
 
     my_bar.progress(20, text="Searching for MIT Blog...")
-    mit_blog = summarize_website_content('https://news.mit.edu/topic/artificial-intelligence2')
+    mit_blog = summarize_website_content('https://blog.google/technology/ai/')
     
     my_bar.progress(40, text='Searching for lexi friman boardcast...')
     lexi_boardcast = summarize_website_content('https://lexfridman.com/podcast/')
@@ -396,7 +464,7 @@ def compute_page(st, **state):
     my_bar.progress(50, text="Searching for arxiv ...")
     search = arxiv.Search(
         query = "AI, LLM, machine learning",
-        max_results = 3,
+        max_results = 4,
         sort_by = arxiv.SortCriterion.SubmittedDate
     )
     ariv_essay = ''
@@ -408,7 +476,7 @@ def compute_page(st, **state):
 
     my_bar.progress(80, text="Writing Newsletter...")
     query = 'news from google news' + str(google_news['summary']) + 'news from bair blog' + bair_blog + 'news from mit blog' + str(mit_blog) \
-             + 'news from lexi broadcast' + lexi_boardcast + 'news from openai blog: ' + openai_blog + 'new arxiv essay' \
+              + 'news from openai blog: ' + openai_blog + 'new arxiv essay' \
              + ariv_essay
     
     query = query.replace('<|endoftext|>', '')
@@ -465,29 +533,43 @@ def compute_page(st, **state):
         st.subheader('Summary and Commentary', divider='rainbow')
         st.markdown(summary)
 
-        st.subheader('Technology News', divider='rainbow')
+        st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            st.markdown(f"### {google_news['title'][i]}\n")
+            st.markdown(f'<a href="{google_news["url"][i]}" style="color: darkblue; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
+                <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px;; color: rgba(251, 88, 88, 1)">Google News</span>', unsafe_allow_html=True)
             st.markdown(google_news['summary'][i])
-            st.markdown(f"[more on]({google_news['url'][i]})\n")
 
         st.subheader('Podcast and Speeches', divider='orange')
+
+        st.markdown(f'<a href="https://lexfridman.com/podcast/" style="color: darkblue; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> Lexi Fridman</a>\
+                    <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px;; color: rgba(251, 88, 88, 1)">Lexi Fridman</span>', unsafe_allow_html=True)
         st.markdown(lexi_boardcast)
-        st.markdown(f"[more on](https://www.youtube.com/@lexfridman/videos)\n")
         
         st.subheader('Technology Blogs', divider='green')
-        st.markdown(openai_blog)
-        st.markdown(f"[more on](https://openai.com/blog)\n")
+        st.markdown(f'<a href= {openai_blog_url} style="color: darkblue; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> {openai_title}</a>\
+                <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px;; color: rgba(251, 88, 88, 1)">Openai</span>', unsafe_allow_html=True)
+        st.markdown(openai_blog)  
+
+        st.markdown(f'<a href={link} style="color: darkblue; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> {M_title}</a>\
+                <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">Microsoft</span>', unsafe_allow_html=True)
         st.markdown(bair_blog)
-        st.markdown(f"[more on](https://bair.berkeley.edu/blog/)\n")
+        
+        st.markdown(f'<a href="https://blog.google/technology/ai/" style="color: darkblue; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> Google Blog</a>\
+                    <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">Google</span>', unsafe_allow_html=True)
         st.markdown(mit_blog)
-        st.markdown(f"[more on](https://news.mit.edu/topic/artificial-intelligence2)\n")
+
 
         st.subheader('Cutting-edge Papers', divider='green')
         for result in search.results():
-            st.markdown(f"### {result.title}\n")
+            st.markdown(f'<a href="{result.entry_id}" style="color: darkblue; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> {result.title} </a>', unsafe_allow_html=True)
             st.markdown(result.summary)
-            st.markdown(f"[more on]({result.entry_id})\n")
+            
 
     elif st.session_state.language == '中文':
         st.subheader('摘要与评论', divider='rainbow')
@@ -517,9 +599,10 @@ def compute_page(st, **state):
                         {'role':'user',
                         'content': f"【{news_summary}】"},]
             news_summary = get_completion_from_messages(messages)
-            st.markdown(f"### {title}\n")
+            # 使用 HTML a 标签为标题创建一个超链接，并设置其颜色为深蓝色。
+            st.markdown(f'<a href="{google_news["url"][i]}" style="color: darkblue; text-decoration: none;">#### {title}</a>', unsafe_allow_html=True)
             st.markdown(news_summary)
-            st.markdown(f"[more on]({google_news['url'][i]})\n")
+
 
         st.subheader('播客与演讲', divider='orange')
         lexi_boardcast = lexi_boardcast.replace('<|endoftext|>', '')
@@ -581,9 +664,8 @@ def compute_page(st, **state):
                         'content': f"【{result_summary}】"},]
             result_summary = get_completion_from_messages(messages)
 
-            st.markdown(f"### {result_title}\n")
+            st.markdown(f'<a href="{result.entry_id}" style="color: darkblue; text-decoration: none;">#### {result_title}</a>', unsafe_allow_html=True)
             st.markdown(result_summary)
-            st.markdown(f"[more on]({result.entry_id})\n")
 
 
 def page_one():
@@ -594,7 +676,6 @@ def page_two():
 
 
 def main():
-    # 初始化session状态
     if "page" not in st.session_state:
         st.session_state.page = "one"
 
