@@ -6,7 +6,7 @@ openai
 playwright
 tiktoken
 doctran
-langchain
+langchain == 0.0.164
 edge-tts
 arxiv
 twint
