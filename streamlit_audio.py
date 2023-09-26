@@ -41,7 +41,27 @@ system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
 
-
+def get_latest_aws_ml_blog():
+    url = 'https://aws.amazon.com/blogs/machine-learning/'
+    
+    response = requests.get(url)
+    
+    if response.status_code != 200:
+        print(f"Failed to retrieve webpage. Status code: {response.status_code}")
+        return None, None
+    
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    articles = soup.find_all('div', class_='lb-col lb-mid-18 lb-tiny-24')
+    
+    if not articles:
+        print("No articles found.")
+        return None, None
+    
+    title = articles[0].find('h2').text
+    link = articles[0].find('a')['href']
+    
+    return title, link
 
 def fetch_videos_from_channel(channel_id):
     playlist = Playlist(playlist_from_channel_id(channel_id))
@@ -122,7 +142,7 @@ def get_completion_from_messages(messages,
     )
     return response.choices[0].message["content"]
 
-def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
+def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=7, exclude_websites=None):
     """
     Fetch news links from Google News based on the provided query.
 
@@ -447,6 +467,7 @@ def compute_page(st, **state):
     my_bar = progress_placeholder.progress(0, text=progress_text)
     openai_blog_url = get_latest_openai_blog_url()
     if openai_blog_url:
+        
         openai_title = get_h1_from_url(openai_blog_url)
         openai_blog = summarize_website_content(openai_blog_url)
 
@@ -455,8 +476,12 @@ def compute_page(st, **state):
     M_title, link = extract_blog_link_info(url)
     bair_blog = summarize_website_content(link)
 
-    my_bar.progress(20, text="Searching for MIT Blog...")
-    mit_blog = summarize_website_content('https://blog.google/technology/ai/')
+    my_bar.progress(20, text="Searching for Amazon Blog...")
+    A_title, A_link = get_latest_aws_ml_blog()
+    mit_blog = summarize_website_content(A_link)
+
+    my_bar.progress(30, text="Searching for Apple Blog...")
+    Apple_blog = summarize_website_content('https://machinelearning.apple.com/')
     
     my_bar.progress(40, text='Searching for lexi friman boardcast...')
     lexi_boardcast = summarize_website_content('https://lexfridman.com/podcast/')
@@ -558,16 +583,23 @@ def compute_page(st, **state):
                 <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">Microsoft</span>', unsafe_allow_html=True)
         st.markdown(bair_blog)
         
-        st.markdown(f'<a href="https://blog.google/technology/ai/" style="color: darkblue; text-decoration: none; \
-            font-size: 20px;font-weight: bold;"> Google Blog</a>\
-                    <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">Google</span>', unsafe_allow_html=True)
+        st.markdown(f'<a href="{A_link}" style="color: darkblue; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> {A_title}</a>\
+                    <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">Amazon</span>', unsafe_allow_html=True)
         st.markdown(mit_blog)
+
+        st.markdown(f'<a href="https://machinelearning.apple.com/" style="color: darkblue; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> Recent research </a>\
+                    <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">Apple</span>', unsafe_allow_html=True)
+        st.markdown(Apple_blog)
 
 
         st.subheader('Cutting-edge Papers', divider='green')
         for result in search.results():
             st.markdown(f'<a href="{result.entry_id}" style="color: darkblue; text-decoration: none; \
-            font-size: 20px;font-weight: bold;"> {result.title} </a>', unsafe_allow_html=True)
+            font-size: 20px;font-weight: bold;"> {result.title} </a>\
+             <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">{result.primary_category}</span>\
+                ', unsafe_allow_html=True)
             st.markdown(result.summary)
             
 
@@ -599,7 +631,7 @@ def compute_page(st, **state):
                         {'role':'user',
                         'content': f"【{news_summary}】"},]
             news_summary = get_completion_from_messages(messages)
-            # 使用 HTML a 标签为标题创建一个超链接，并设置其颜色为深蓝色。
+ 
             st.markdown(f'<a href="{google_news["url"][i]}" style="color: darkblue; text-decoration: none;">#### {title}</a>', unsafe_allow_html=True)
             st.markdown(news_summary)
 
