@@ -26,6 +26,20 @@ from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
 
+
+
+def is_link_accessible(url):
+    """Check if a link is accessible."""
+    try:
+        response = requests.get(url, timeout=10)  # setting a timeout to avoid waiting indefinitely
+        # Check if the status code is 4xx or 5xx
+        if 400 <= response.status_code < 600:
+            return False
+        return True
+    except requests.RequestException:
+        return False
+
+
 system_message = '''
                 You are a very talented news editor, skilled at consolidating 
                 fragmented information and introductions into a cohesive news script, without missing any details.
@@ -39,18 +53,6 @@ system_message_2 = '''
 system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
-
-def is_link_accessible(url):
-    """Check if a link is accessible."""
-    try:
-        response = requests.get(url, timeout=10)  # setting a timeout to avoid waiting indefinitely
-        # Check if the status code is 4xx or 5xx
-        if 400 <= response.status_code < 600:
-            return False
-        return True
-    except requests.RequestException:
-        return False
-
 
 def get_latest_aws_ml_blog():
     url = 'https://aws.amazon.com/blogs/machine-learning/'
@@ -212,21 +214,24 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     Returns:
     - The summarized content.
     """
+    if is_link_accessible(url):
+        # Load the content from the given URL
+        loader = WebBaseLoader(url)
+        docs = loader.load()
+
+        # Initialize the ChatOpenAI model
+        llm = ChatOpenAI(temperature=temperature, model_name=model_name)
+        
+        # Load the summarization chain
+        chain = load_summarize_chain(llm, chain_type=chain_type)
+
+        # Run the chain on the loaded documents
+        summarized_content = chain.run(docs)
+        
+        return summarized_content
     
-    # Load the content from the given URL
-    loader = WebBaseLoader(url)
-    docs = loader.load()
-
-    # Initialize the ChatOpenAI model
-    llm = ChatOpenAI(temperature=temperature, model_name=model_name)
-    
-    # Load the summarization chain
-    chain = load_summarize_chain(llm, chain_type=chain_type)
-
-    # Run the chain on the loaded documents
-    summarized_content = chain.run(docs)
-
-    return summarized_content
+    else:
+        return None
 
 
 def get_transcript_link(url):
@@ -614,33 +619,38 @@ def compute_page(st, **state):
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            if is_link_accessible(google_news["url"][i]):
+            if google_news['summary'][i]:
                 st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
                 font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
-                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88);\
+                    border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
                 st.markdown(google_news['summary'][i])
 
         st.subheader('Podcast and Speeches', divider='orange')
 
         st.markdown(f'<a href="https://lexfridman.com/podcast/" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;">{L_title}</a>\
-                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lexi Fridman</span>', unsafe_allow_html=True)
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88);\
+                    border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lexi Fridman</span>', unsafe_allow_html=True)
         st.markdown(lexi_boardcast)
         
         st.subheader('Technology Blogs', divider='green')
         st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {openai_title}</a>\
-                <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Openai</span>', unsafe_allow_html=True)
+                <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); \
+                border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Openai</span>', unsafe_allow_html=True)
         st.markdown(openai_blog)  
 
         st.markdown(f'<a href={link} style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {M_title}</a>\
-                <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Microsoft</span>', unsafe_allow_html=True)
+                <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); \
+                border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Microsoft</span>', unsafe_allow_html=True)
         st.markdown(bair_blog)
         
         st.markdown(f'<a href="{A_link}" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {A_title}</a>\
-                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Amazon</span>', unsafe_allow_html=True)
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); \
+                    border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Amazon</span>', unsafe_allow_html=True)
         st.markdown(mit_blog)
 
         st.markdown(
@@ -789,4 +799,3 @@ def main():
 if __name__ == "__main__":
     st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
     main()
-
