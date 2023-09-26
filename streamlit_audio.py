@@ -26,7 +26,6 @@ from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
 
-
 system_message = '''
                 You are a very talented news editor, skilled at consolidating 
                 fragmented information and introductions into a cohesive news script, without missing any details.
@@ -69,7 +68,20 @@ def fetch_videos_from_channel(channel_id):
         playlist.getNextVideos()
     return playlist.videos
 
+def get_h1_text(url):
+    """Fetches the text content of the first h1 element from the given URL."""
+    
+    # Get the HTML content of the URL
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
 
+    # Find the first h1 element and get its text
+    h1_element = soup.find('h1', class_='entry-title')
+    if h1_element:
+        return h1_element.text.strip()  # Remove any extra whitespaces
+    else:
+        return None
+    
 def get_transcript(video_id):
     raw_data = YouTubeTranscriptApi.get_transcript(video_id)
     texts = [item['text'] for item in raw_data]
@@ -142,7 +154,7 @@ def get_completion_from_messages(messages,
     )
     return response.choices[0].message["content"]
 
-def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=7, exclude_websites=None):
+def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=3, exclude_websites=None):
     """
     Fetch news links from Google News based on the provided query.
 
@@ -203,6 +215,33 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     summarized_content = chain.run(docs)
 
     return summarized_content
+
+
+def get_transcript_link(url):
+    """Fetches the first 'Transcript' link from the given URL."""
+    
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    transcript_link_element = soup.find('a', string="Transcript")
+
+    if transcript_link_element:
+        return transcript_link_element['href']
+    else:
+        return None
+
+def get_youtube_link(url):
+    """Fetches the first 'Transcript' link from the given URL."""
+    
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+
+    transcript_link_element = soup.find('a', string="Video")
+
+    if transcript_link_element:
+        return transcript_link_element['href']
+    else:
+        return None
 
 def get_latest_openai_blog_url():
     base_url = "https://openai.com"
@@ -484,12 +523,16 @@ def compute_page(st, **state):
     Apple_blog = summarize_website_content('https://machinelearning.apple.com/')
     
     my_bar.progress(40, text='Searching for lexi friman boardcast...')
-    lexi_boardcast = summarize_website_content('https://lexfridman.com/podcast/')
+    url = "https://lexfridman.com/podcast/"
+    link = get_transcript_link(url)
+    L_title = get_h1_text(link)
+    youtube_link = get_youtube_link(url)
+    lexi_boardcast = summarize_website_content(youtube_link)
 
     my_bar.progress(50, text="Searching for arxiv ...")
     search = arxiv.Search(
-        query = "AI, LLM, machine learning",
-        max_results = 4,
+        query = "AI, LLM, machine learning, NLP",
+        max_results = 3,
         sort_by = arxiv.SortCriterion.SubmittedDate
     )
     ariv_essay = ''
@@ -500,9 +543,8 @@ def compute_page(st, **state):
     google_news = fetch_gnews_links(query='AI, LLM, Machine learning')
 
     my_bar.progress(80, text="Writing Newsletter...")
-    query = 'news from google news' + str(google_news['summary']) + 'news from bair blog' + bair_blog + 'news from mit blog' + str(mit_blog) \
-              + 'news from openai blog: ' + openai_blog + 'new arxiv essay' \
-             + ariv_essay
+    query = 'news from google news' + str(google_news['summary'])  + bair_blog  + str(mit_blog) \
+              + openai_blog + 'new arxiv essay' + ariv_essay
     
     query = query.replace('<|endoftext|>', '')
     messages =  [
@@ -560,45 +602,47 @@ def compute_page(st, **state):
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            st.markdown(f'<a href="{google_news["url"][i]}" style="color: darkblue; text-decoration: none; \
+            st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
-                <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px;; color: rgba(251, 88, 88, 1)">Google News</span>', unsafe_allow_html=True)
+                <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
             st.markdown(google_news['summary'][i])
 
         st.subheader('Podcast and Speeches', divider='orange')
 
-        st.markdown(f'<a href="https://lexfridman.com/podcast/" style="color: darkblue; text-decoration: none; \
-            font-size: 20px;font-weight: bold;"> Lexi Fridman</a>\
-                    <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px;; color: rgba(251, 88, 88, 1)">Lexi Fridman</span>', unsafe_allow_html=True)
+        st.markdown(f'<a href="https://lexfridman.com/podcast/" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{L_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lexi Fridman</span>', unsafe_allow_html=True)
         st.markdown(lexi_boardcast)
         
         st.subheader('Technology Blogs', divider='green')
-        st.markdown(f'<a href= {openai_blog_url} style="color: darkblue; text-decoration: none; \
+        st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {openai_title}</a>\
-                <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px;; color: rgba(251, 88, 88, 1)">Openai</span>', unsafe_allow_html=True)
+                <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Openai</span>', unsafe_allow_html=True)
         st.markdown(openai_blog)  
 
-        st.markdown(f'<a href={link} style="color: darkblue; text-decoration: none; \
+        st.markdown(f'<a href={link} style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {M_title}</a>\
-                <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">Microsoft</span>', unsafe_allow_html=True)
+                <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Microsoft</span>', unsafe_allow_html=True)
         st.markdown(bair_blog)
         
-        st.markdown(f'<a href="{A_link}" style="color: darkblue; text-decoration: none; \
+        st.markdown(f'<a href="{A_link}" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {A_title}</a>\
-                    <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">Amazon</span>', unsafe_allow_html=True)
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Amazon</span>', unsafe_allow_html=True)
         st.markdown(mit_blog)
 
-        st.markdown(f'<a href="https://machinelearning.apple.com/" style="color: darkblue; text-decoration: none; \
-            font-size: 20px;font-weight: bold;"> Recent research </a>\
-                    <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">Apple</span>', unsafe_allow_html=True)
+        st.markdown(
+            f'<a href="https://machinelearning.apple.com/" style="color:  #2859C0; text-decoration: none; font-size: 20px; font-weight: bold;">Recent research</a>\
+            <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Apple</span>', 
+            unsafe_allow_html=True
+        )
         st.markdown(Apple_blog)
 
 
         st.subheader('Cutting-edge Papers', divider='green')
         for result in search.results():
-            st.markdown(f'<a href="{result.entry_id}" style="color: darkblue; text-decoration: none; \
+            st.markdown(f'<a href="{result.entry_id}" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {result.title} </a>\
-             <span style="margin-left: 10px; background-color: rgba(251, 88, 88, 0.19); padding: 2px 4px; border-radius: 20px; font-size: 7px; color: rgba(251, 88, 88, 1)">{result.primary_category}</span>\
+             <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">{result.primary_category}</span>\
                 ', unsafe_allow_html=True)
             st.markdown(result.summary)
             
@@ -632,7 +676,7 @@ def compute_page(st, **state):
                         'content': f"【{news_summary}】"},]
             news_summary = get_completion_from_messages(messages)
  
-            st.markdown(f'<a href="{google_news["url"][i]}" style="color: darkblue; text-decoration: none;">#### {title}</a>', unsafe_allow_html=True)
+            st.markdown(f'<a href="{google_news["url"][i]}" style="color:  #2859C0; text-decoration: none;">#### {title}</a>', unsafe_allow_html=True)
             st.markdown(news_summary)
 
 
@@ -696,7 +740,7 @@ def compute_page(st, **state):
                         'content': f"【{result_summary}】"},]
             result_summary = get_completion_from_messages(messages)
 
-            st.markdown(f'<a href="{result.entry_id}" style="color: darkblue; text-decoration: none;">#### {result_title}</a>', unsafe_allow_html=True)
+            st.markdown(f'<a href="{result.entry_id}" style="color:  #2859C0; text-decoration: none;">#### {result_title}</a>', unsafe_allow_html=True)
             st.markdown(result_summary)
 
 
@@ -732,3 +776,4 @@ def main():
 if __name__ == "__main__":
     st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
     main()
+
