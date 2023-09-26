@@ -676,6 +676,7 @@ def page_two():
 
 
 def main():
+    # 初始化session状态
     if "page" not in st.session_state:
         st.session_state.page = "one"
 
