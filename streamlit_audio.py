@@ -447,7 +447,7 @@ def compute_page(st, **state):
     my_bar = progress_placeholder.progress(0, text=progress_text)
     openai_blog_url = get_latest_openai_blog_url()
     if openai_blog_url:
-        print(openai_blog_url)
+        st.write(openai_blog_url)
         openai_title = get_h1_from_url(openai_blog_url)
         openai_blog = summarize_website_content(openai_blog_url)
 
