@@ -40,6 +40,18 @@ system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
 
+def is_link_accessible(url):
+    """Check if a link is accessible."""
+    try:
+        response = requests.get(url, timeout=10)  # setting a timeout to avoid waiting indefinitely
+        # Check if the status code is 4xx or 5xx
+        if 400 <= response.status_code < 600:
+            return False
+        return True
+    except requests.RequestException:
+        return False
+
+
 def get_latest_aws_ml_blog():
     url = 'https://aws.amazon.com/blogs/machine-learning/'
     
@@ -154,7 +166,7 @@ def get_completion_from_messages(messages,
     )
     return response.choices[0].message["content"]
 
-def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=3, exclude_websites=None):
+def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
     """
     Fetch news links from Google News based on the provided query.
 
@@ -602,10 +614,11 @@ def compute_page(st, **state):
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
-            font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
-                <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
-            st.markdown(google_news['summary'][i])
+            if is_link_accessible(google_news["url"][i]):
+                st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
+                font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
+                st.markdown(google_news['summary'][i])
 
         st.subheader('Podcast and Speeches', divider='orange')
 
