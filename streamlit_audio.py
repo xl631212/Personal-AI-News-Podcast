@@ -589,7 +589,6 @@ def compute_page(st, **state):
     data_mrf_link, h_title = extract_data_from_url(url, class_name)
     h_content = summarize_website_content(data_mrf_link)
 
-
     my_bar.progress(75, text="Nvidia Podcast...")
     n_content = summarize_website_content('https://blogs.nvidia.com/ai-podcast/')
 
@@ -642,9 +641,6 @@ def compute_page(st, **state):
     my_bar.progress(100, text="Almost there...")
 
     with radio_placeholder:
-        #audio_file = open('hello.mp3', 'rb')
-        #audio_bytes = audio_file.read()
-        #st.audio(audio_bytes, format='wav')
         autoplay_audio("hello.mp3")
 
     my_bar.empty()
@@ -654,7 +650,7 @@ def compute_page(st, **state):
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            if 'No result' not in google_news['summary'][i]:
+            if len(google_news['summary'][i]) > 20:
                 st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
                 font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
