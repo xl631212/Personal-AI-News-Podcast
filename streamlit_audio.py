@@ -500,17 +500,18 @@ def input_page(st, **state):
 
             st.markdown("</div>", unsafe_allow_html=True)
 
+    # 将自定义的角标添加到右上角
     st.markdown("""
         <style>
             .footer {
                 position: fixed;
-                bottom: 0;
-                left: 0;
+                top: 0;
+                right: 0;
                 width: auto;
                 background-color: transparent;
-                text-align: left;
-                padding-left: 10px;
-                padding-bottom: 10px;
+                text-align: right;
+                padding-right: 10px;
+                padding-top: 10px;
             }
         </style>
         <div class="footer">Made with ❤️ by Xuying Li</div>
@@ -548,16 +549,17 @@ def input_page(st, **state):
 def compute_page(st, **state):
     st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: #FF4B4B;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
+    # 将自定义的角标添加到右上角
     st.markdown("""
         <style>
             .footer {
                 position: fixed;
                 top: 0;
-                left: 0;
+                right: 0;
                 width: auto;
                 background-color: transparent;
-                text-align: left;
-                padding-left: 10px;
+                text-align: right;
+                padding-right: 10px;
                 padding-top: 10px;
             }
         </style>
