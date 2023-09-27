@@ -242,7 +242,7 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     Returns:
     - The summarized content.
     """
-    if is_link_accessible(url):
+    if True:
         # Load the content from the given URL
         loader = WebBaseLoader(url)
         docs = loader.load()
