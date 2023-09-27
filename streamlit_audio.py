@@ -172,7 +172,8 @@ def get_completion_from_messages(messages,
     )
     return response.choices[0].message["content"]
 
-def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
+
+def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=7, exclude_websites=None):
     """
     Fetch news links from Google News based on the provided query.
 
@@ -202,7 +203,6 @@ def fetch_gnews_links(query, language='en', country='US', period='1d', start_dat
       content['summary'].append(summarize_website_content(url))
 
     return content
-
 
 
 def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k", chain_type="stuff"):
