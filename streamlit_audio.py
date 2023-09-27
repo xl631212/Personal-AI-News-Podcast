@@ -624,7 +624,7 @@ def compute_page(st, **state):
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            if google_news['summary'][i] == 'No result':
+            if len(google_news['summary'][i]) < 20:
                 pass
             else:
                 st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
