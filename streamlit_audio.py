@@ -500,7 +500,22 @@ def input_page(st, **state):
 
             st.markdown("</div>", unsafe_allow_html=True)
 
-
+    st.markdown("""
+        <style>
+            .footer {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                width: auto;
+                background-color: transparent;
+                text-align: right;
+                padding-right: 10px;
+                padding-bottom: 10px;
+            }
+        </style>
+        <div class="footer">Made with ❤️ by Xuying Li</div>
+    """, unsafe_allow_html=True)
+  
     with button_placeholder:
         # 添加按钮样式
         st.markdown("""
@@ -527,6 +542,7 @@ def input_page(st, **state):
             st.session_state.page = "two"
             st.session_state.choice = choice
             st.session_state.language = language
+      
         
 
 def compute_page(st, **state):
@@ -540,6 +556,21 @@ def compute_page(st, **state):
             margin: auto;
         }
     </style>
+    """, unsafe_allow_html=True)
+    st.markdown("""
+        <style>
+            .footer {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                width: auto;
+                background-color: transparent;
+                text-align: right;
+                padding-right: 10px;
+                padding-bottom: 10px;
+            }
+        </style>
+        <div class="footer">Made with ❤️ by Xuying Li</div>
     """, unsafe_allow_html=True)
     radio_placeholder = st.empty()
     progress_placeholder = st.empty()
@@ -650,7 +681,7 @@ def compute_page(st, **state):
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            if len(google_news['summary'][i]) > 20:
+            if len(google_news['summary'][i]) > 100:
                 st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
                 font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
@@ -847,6 +878,7 @@ def compute_page(st, **state):
              <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">{result.primary_category}</span>\
                 ', unsafe_allow_html=True)
             st.markdown(result_summary)
+          
 
 
 def page_one():
