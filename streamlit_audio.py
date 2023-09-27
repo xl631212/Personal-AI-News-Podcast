@@ -705,11 +705,12 @@ def compute_page(st, **state):
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Nvidia</span>', unsafe_allow_html=True)
         st.markdown(n_content)
 
-        st.markdown(f'<a href={a16z_link}style="color:  #2859C0; text-decoration: none; \
-            font-size: 20px;font-weight: bold;">{a16z_title}</a>\
-                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Machine Learning Street Talk</span>', unsafe_allow_html=True)
+        a16z_link_html = f'<a href="{a16z_link}" style="color: #2859C0; text-decoration: none; font-size: 20px; font-weight: bold;">{a16z_title}</a>'
+        mlst_html = '<span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Machine Learning Street Talk</span>'
+        full_html = a16z_link_html + mlst_html
+        st.markdown(full_html, unsafe_allow_html=True)
         st.markdown(a16z_blog)
-        
+      
         st.subheader('Technology Blogs', divider='green')
         st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {openai_title}</a>\
