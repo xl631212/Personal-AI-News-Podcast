@@ -172,7 +172,7 @@ def get_completion_from_messages(messages,
     )
     return response.choices[0].message["content"]
 
-def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=6, exclude_websites=None):
+def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
     """
     Fetch news links from Google News based on the provided query.
 
@@ -218,16 +218,24 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     Returns:
     - The summarized content.
     """
-    # Load the content from the given URL
-    loader = WebBaseLoader(url)
-    docs = loader.load()
-    # Initialize the ChatOpenAI model
-    llm = ChatOpenAI(temperature=temperature, model_name=model_name)
-    # Load the summarization chain
-    chain = load_summarize_chain(llm, chain_type=chain_type)
-    # Run the chain on the loaded documents
-    summarized_content = chain.run(docs)
-    return summarized_content
+    if is_link_accessible(url):
+        # Load the content from the given URL
+        loader = WebBaseLoader(url)
+        docs = loader.load()
+
+        # Initialize the ChatOpenAI model
+        llm = ChatOpenAI(temperature=temperature, model_name=model_name)
+        
+        # Load the summarization chain
+        chain = load_summarize_chain(llm, chain_type=chain_type)
+
+        # Run the chain on the loaded documents
+        summarized_content = chain.run(docs)
+        
+        return summarized_content
+    
+    else:
+        return 'No result'
 
 
 def get_transcript_link(url):
@@ -616,7 +624,7 @@ def compute_page(st, **state):
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            if google_news['summary'][i] != 'No result':
+            if 'summary' not in google_news['summary'][i]:
                 st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
                 font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
@@ -669,7 +677,7 @@ def compute_page(st, **state):
                         {'role':'system',
                         'content': system_message_3},
                         {'role':'user',
-                        'content': f"【{summary}】"},]
+                        'content': f"{summary}"},]
         summary = get_completion_from_messages(messages)
         st.markdown(summary)
 
@@ -691,7 +699,9 @@ def compute_page(st, **state):
                         'content': f"【{news_summary}】"},]
             news_summary = get_completion_from_messages(messages)
  
-            st.markdown(f'<a href="{google_news["url"][i]}" style="color:  #2859C0; text-decoration: none;">#### {title}</a>', unsafe_allow_html=True)
+            st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
+                font-size: 20px;font-weight: bold;"> {title} </a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
             st.markdown(news_summary)
 
 
@@ -703,8 +713,19 @@ def compute_page(st, **state):
                         {'role':'user',
                         'content': f"【{lexi_boardcast}】"},]
         lexi_boardcast = get_completion_from_messages(messages)
+
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"{L_title}"},]
+        L_title = get_completion_from_messages(messages)
+
+        st.markdown(f'<a href="https://www.youtube.com/@lexfridman/videos" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{L_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lexi Fridman</span>', unsafe_allow_html=True)
         st.markdown(lexi_boardcast)
-        st.markdown(f"[more on](https://www.youtube.com/@lexfridman/videos)\n")
+        
         
         st.subheader('科技博客', divider='green')
         openai_blog = openai_blog.replace('<|endoftext|>', '')
@@ -712,10 +733,21 @@ def compute_page(st, **state):
                         {'role':'system',
                         'content': system_message_3},
                         {'role':'user',
-                        'content': f"【{openai_blog}】"},]
+                        'content': f"{openai_blog}"},]
         openai_blog = get_completion_from_messages(messages)
+
+
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{openai_title}】"},]
+        openai_title = get_completion_from_messages(messages)
+
+        st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> {openai_title}</a>\
+                <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Openai</span>', unsafe_allow_html=True)
         st.markdown(openai_blog)
-        st.markdown(f"[more on](https://openai.com/)\n")
 
         bair_blog = bair_blog.replace('<|endoftext|>', '')
         messages =  [
@@ -724,8 +756,17 @@ def compute_page(st, **state):
                         {'role':'user',
                         'content': f"【{bair_blog}】"},]
         bair_blog = get_completion_from_messages(messages)
+
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"{M_title}"},]
+        M_title = get_completion_from_messages(messages)
+        st.markdown(f'<a href={link} style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> {M_title}</a>\
+                <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Microsoft</span>', unsafe_allow_html=True)
         st.markdown(bair_blog)
-        st.markdown(f"[more on](https://bair.berkeley.edu/blog/)\n")
 
         mit_blog = mit_blog.replace('<|endoftext|>', '')
         messages =  [
@@ -734,8 +775,18 @@ def compute_page(st, **state):
                         {'role':'user',
                         'content': f"【{mit_blog}】"},]
         mit_blog = get_completion_from_messages(messages)
+
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"{A_title}"},]
+        A_title = get_completion_from_messages(messages)
+        st.markdown(f'<a href="{A_link}" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> {A_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Amazon</span>', unsafe_allow_html=True)
         st.markdown(mit_blog)
-        st.markdown(f"[more on](https://news.mit.edu/topic/artificial-intelligence2)\n")
+        
 
         st.subheader('尖端论文', divider='green')
         for result in search.results():
@@ -745,17 +796,20 @@ def compute_page(st, **state):
                         {'role':'system',
                         'content': system_message_3},
                         {'role':'user',
-                        'content': f"【{title}】"},]
+                        'content': f"{title}"},]
             result_title = get_completion_from_messages(messages)
 
             messages =  [
                         {'role':'system',
                         'content': system_message_3},
                         {'role':'user',
-                        'content': f"【{result_summary}】"},]
+                        'content': f"{result_summary}"},]
             result_summary = get_completion_from_messages(messages)
 
-            st.markdown(f'<a href="{result.entry_id}" style="color:  #2859C0; text-decoration: none;">#### {result_title}</a>', unsafe_allow_html=True)
+            st.markdown(f'<a href="{result.entry_id}" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;"> {result_title} </a>\
+             <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">{result.primary_category}</span>\
+                ', unsafe_allow_html=True)
             st.markdown(result_summary)
 
 
