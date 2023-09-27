@@ -505,11 +505,11 @@ def input_page(st, **state):
             .footer {
                 position: fixed;
                 bottom: 0;
-                right: 0;
+                left: 0;
                 width: auto;
                 background-color: transparent;
-                text-align: right;
-                padding-right: 10px;
+                text-align: left;
+                padding-left: 10px;
                 padding-bottom: 10px;
             }
         </style>
@@ -549,29 +549,21 @@ def compute_page(st, **state):
     st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: #FF4B4B;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
     st.markdown("""
-    <style>
-        /* This styles the main content excluding h1 and h2 */
-        #root .block-container {
-            width: 75%;
-            margin: auto;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-    st.markdown("""
         <style>
             .footer {
                 position: fixed;
                 bottom: 0;
-                right: 0;
+                left: 0;
                 width: auto;
                 background-color: transparent;
-                text-align: right;
-                padding-right: 10px;
+                text-align: left;
+                padding-left: 10px;
                 padding-bottom: 10px;
             }
         </style>
         <div class="footer">Made with ❤️ by Xuying Li</div>
     """, unsafe_allow_html=True)
+  
     radio_placeholder = st.empty()
     progress_placeholder = st.empty()
     progress_text = "Searching for Openai Blog..."
