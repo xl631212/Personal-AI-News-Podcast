@@ -105,7 +105,31 @@ def get_transcript(video_id):
     texts = [item['text'] for item in raw_data]
     return ' '.join(texts)
 
+def extract_data_from_url(url, class_name):
+    """
+    从指定的URL中提取特定类名的<a>标签的href属性和文本内容。
 
+    参数:
+    - url (str): 要提取数据的网页URL。
+    - class_name (str): 要查找的<a>标签的类名。
+
+    """
+
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        target_a = soup.find('a', class_=class_name)
+
+        if target_a:
+            data_mrf_link = target_a.get('href')
+            text = target_a.get_text().strip()
+            return (data_mrf_link, text)
+        else:
+            raise ValueError("找不到目标元素。")
+    else:
+        raise ConnectionError("请求失败。")
+    
 def split_text_into_documents(long_string, max_docs=20):
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=500,
@@ -172,8 +196,7 @@ def get_completion_from_messages(messages,
     )
     return response.choices[0].message["content"]
 
-
-def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=7, exclude_websites=None):
+def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
     """
     Fetch news links from Google News based on the provided query.
 
@@ -205,6 +228,7 @@ def fetch_gnews_links(query, language='en', country='US', period='1d', start_dat
     return content
 
 
+
 def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k", chain_type="stuff"):
     """
     Summarize the content of a given website URL.
@@ -218,7 +242,7 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     Returns:
     - The summarized content.
     """
-    if True:
+    if is_link_accessible(url):
         # Load the content from the given URL
         loader = WebBaseLoader(url)
         docs = loader.load()
@@ -335,7 +359,6 @@ def heacker_news_content():
                 content['url'].append(hn.item(news).url)
                 content['summary'].append(summarize_website_content(hn.item(news).url))
     return content
-
 
 def input_page(st, **state):
     st.markdown("""
@@ -478,8 +501,6 @@ def input_page(st, **state):
             st.markdown("</div>", unsafe_allow_html=True)
 
 
-
-
     with button_placeholder:
         # 添加按钮样式
         st.markdown("""
@@ -507,7 +528,6 @@ def input_page(st, **state):
             st.session_state.choice = choice
             st.session_state.language = language
         
-
 
 def compute_page(st, **state):
     st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: #FF4B4B;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
@@ -563,9 +583,19 @@ def compute_page(st, **state):
     my_bar.progress(60, text="Searching Google News...")
     google_news = fetch_gnews_links(query='AI, LLM, Machine learning')
 
+    my_bar.progress(70, text="Searching Techcrunch...")
+    url = "https://techcrunch.com/"
+    class_name = 'post-block__title__link'
+    data_mrf_link, h_title = extract_data_from_url(url, class_name)
+    h_content = summarize_website_content(data_mrf_link)
+
+
+    my_bar.progress(75, text="Nvidia Podcast...")
+    n_content = summarize_website_content('https://blogs.nvidia.com/ai-podcast/')
+
     my_bar.progress(80, text="Writing Newsletter...")
     print(google_news['summary'], bair_blog, mit_blog, openai_blog, ariv_essay)
-    query = 'news from google news' + str(google_news['summary'])  + bair_blog  + str(mit_blog) \
+    query = str(google_news['summary'])  + bair_blog  + str(mit_blog)  + str(h_content)\
               + openai_blog + 'new arxiv essay' + ariv_essay
     
     query = query.replace('<|endoftext|>', '')
@@ -624,20 +654,28 @@ def compute_page(st, **state):
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            if len(google_news['summary'][i]) < 20:
-                pass
-            else:
+            if 'No result' not in google_news['summary'][i]:
                 st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
                 font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
                 st.markdown(google_news['summary'][i])
+        
+        st.markdown(f'<a href="https://techcrunch.com/" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{h_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Techcrunch</span>', unsafe_allow_html=True)
+        st.markdown(h_content)
 
         st.subheader('Podcast and Speeches', divider='orange')
 
         st.markdown(f'<a href="https://lexfridman.com/podcast/" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;">{L_title}</a>\
-                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lexi Fridman</span>', unsafe_allow_html=True)
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lex Fridman</span>', unsafe_allow_html=True)
         st.markdown(lexi_boardcast)
+
+        st.markdown(f'<a href="https://blogs.nvidia.com/ai-podcast/" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">The AI Podcast</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Nvidia</span>', unsafe_allow_html=True)
+        st.markdown(n_content)
         
         st.subheader('Technology Blogs', divider='green')
         st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
@@ -847,4 +885,5 @@ def main():
 if __name__ == "__main__":
     st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
     main()
+
 
