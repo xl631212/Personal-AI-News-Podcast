@@ -544,28 +544,18 @@ def input_page(st, **state):
             st.session_state.choice = choice
             st.session_state.language = language
       
-        
-
 def compute_page(st, **state):
     st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: #FF4B4B;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
-    # 将自定义的角标添加到右上角
     st.markdown("""
-        <style>
-            .footer {
-                position: fixed;
-                top: 0;
-                right: 0;
-                width: auto;
-                background-color: transparent;
-                text-align: right;
-                padding-right: 10px;
-                padding-top: 10px;
-            }
-        </style>
-        <div class="footer">Made with ❤️ by Xuying Li</div>
+    <style>
+        /* This styles the main content excluding h1 and h2 */
+        #root .block-container {
+            width: 75%;
+            margin: auto;
+        }
+    </style>
     """, unsafe_allow_html=True)
-  
     radio_placeholder = st.empty()
     progress_placeholder = st.empty()
     progress_text = "Searching for Openai Blog..."
@@ -580,6 +570,19 @@ def compute_page(st, **state):
     url = "https://blogs.microsoft.com/"
     M_title, link = extract_blog_link_info(url)
     bair_blog = summarize_website_content(link)
+
+
+    my_bar.progress(15, text="Searching for a16z Blog...")
+    channel_id = "UCMLtBahI5DMrt0NPvDSoIRQ"
+    playlist = Playlist(playlist_from_channel_id(channel_id))
+    while playlist.hasMoreVideos:
+        print('Getting more videos...')
+        playlist.getNextVideos()
+        print(f'Videos Retrieved: {len(playlist.videos)}')
+    
+    a16z_title, a16z_link = playlist.videos[0]['title'], playlist.videos[0]['link']
+    a16z_blog = summarize_website_content(a16z_link)
+
 
     my_bar.progress(20, text="Searching for Amazon Blog...")
     A_title, A_link = get_latest_aws_ml_blog()
@@ -614,6 +617,7 @@ def compute_page(st, **state):
     data_mrf_link, h_title = extract_data_from_url(url, class_name)
     h_content = summarize_website_content(data_mrf_link)
 
+
     my_bar.progress(75, text="Nvidia Podcast...")
     n_content = summarize_website_content('https://blogs.nvidia.com/ai-podcast/')
 
@@ -643,7 +647,7 @@ def compute_page(st, **state):
         query = response
         messages =  [
                         {'role':'system',
-                        'content': system_message_2 + "keep it within {} minutes.".format(st.session_state.audio_length)},
+                        'content': system_message_2 + "keep it within {} words.".format(st.session_state.audio_length * 60)},
                         {'role':'user',
                         'content': f"【{query}】"},]
         summary = get_completion_from_messages(messages)
@@ -666,6 +670,9 @@ def compute_page(st, **state):
     my_bar.progress(100, text="Almost there...")
 
     with radio_placeholder:
+        #audio_file = open('hello.mp3', 'rb')
+        #audio_bytes = audio_file.read()
+        #st.audio(audio_bytes, format='wav')
         autoplay_audio("hello.mp3")
 
     my_bar.empty()
@@ -675,7 +682,7 @@ def compute_page(st, **state):
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            if len(google_news['summary'][i]) > 100:
+            if 'No result' not in google_news['summary'][i]:
                 st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
                 font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
@@ -697,6 +704,11 @@ def compute_page(st, **state):
             font-size: 20px;font-weight: bold;">The AI Podcast</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Nvidia</span>', unsafe_allow_html=True)
         st.markdown(n_content)
+
+        st.markdown(f'<a href={a16z_link}style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{a16z_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Machine Learning Street Talk</span>', unsafe_allow_html=True)
+        st.markdown(a16z_blog)
         
         st.subheader('Technology Blogs', divider='green')
         st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
@@ -872,7 +884,21 @@ def compute_page(st, **state):
              <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">{result.primary_category}</span>\
                 ', unsafe_allow_html=True)
             st.markdown(result_summary)
-          
+    st.markdown("""
+        <style>
+            .footer {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                width: auto;
+                background-color: transparent;
+                text-align: right;
+                padding-right: 10px;
+                padding-bottom: 10px;
+            }
+        </style>
+        <div class="footer">Made with ❤️ by Xuying Li</div>
+    """, unsafe_allow_html=True)
 
 
 def page_one():
@@ -907,5 +933,6 @@ def main():
 if __name__ == "__main__":
     st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
     main()
+
 
 
