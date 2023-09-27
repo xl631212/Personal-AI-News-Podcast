@@ -552,13 +552,13 @@ def compute_page(st, **state):
         <style>
             .footer {
                 position: fixed;
-                bottom: 0;
+                top: 0;
                 left: 0;
                 width: auto;
                 background-color: transparent;
                 text-align: left;
                 padding-left: 10px;
-                padding-bottom: 10px;
+                padding-top: 10px;
             }
         </style>
         <div class="footer">Made with ❤️ by Xuying Li</div>
