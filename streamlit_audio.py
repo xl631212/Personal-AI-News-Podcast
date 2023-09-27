@@ -688,7 +688,7 @@ def compute_page(st, **state):
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
                 st.markdown(google_news['summary'][i])
         
-        st.markdown(f'<a href="https://techcrunch.com/" style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href="{data_mrf_link}" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;">{h_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Techcrunch</span>', unsafe_allow_html=True)
         st.markdown(h_content)
