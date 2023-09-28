@@ -374,11 +374,6 @@ def input_page(st, **state):
         """
         <style>
             .social-icons {
-                position: fixed;
-                buttom: 10px;
-                left: 10px;
-                z-index: 1000;
-                display: flex;
                 gap: 10px;  # Space between icons
             }
             .social-icons a i {
@@ -390,23 +385,17 @@ def input_page(st, **state):
         )
 
     # Add the GitHub and Twitter icons with hyperlinks
-    github_url = "https://github.com/your_username/your_repo"  # replace with your GitHub repo URL
-    twitter_url = "https://twitter.com/your_username"  # replace with your Twitter profile URL
-
-    st.markdown(
-        """
-        <div class="social-icons">
-            <a href="{github_url}" target="_blank"><i class="fab fa-github fa-2x"></i></a>
-            <a href="{twitter_url}" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
+    twitter_url = "https://twitter.com/xuying_lee"  # replace with your Twitter profile URL
 
     st.markdown("""
     <h1 style='text-align: center; color: black;'>
         Your Personal <span style='color: #FF4B4B; font-size: 1.25em;'>AI News</span> Podcast
     </h1>
+    <div class="social-icons" style='text-align: center; color: black;'>
+            <a href="{github_url}" target="_blank"><i class="fab fa-github fa-2x"></i></a>
+            <a href="{twitter_url}" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+        </div>
     """, 
     unsafe_allow_html=True
     )
