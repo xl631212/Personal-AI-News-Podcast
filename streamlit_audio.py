@@ -361,7 +361,7 @@ def heacker_news_content():
     return content
 
 def input_page(st, **state):
-    
+    # Include Font Awesome CSS
     st.markdown(
         """
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -375,7 +375,7 @@ def input_page(st, **state):
         <style>
             .social-icons {
                 position: fixed;
-                bottom: 10px;
+                top: 10px;
                 left: 10px;
                 z-index: 1000;
                 display: flex;
