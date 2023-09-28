@@ -34,8 +34,8 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
 system_message = '''
-                You are a very talented news editor, skilled at consolidating 
-                fragmented information and introductions into a cohesive news script, without missing any details.
+                You are a very talented editor, skilled at consolidating 
+                fragmented information and introductions into a cohesive script, without missing any details.
                 Compile the news article based on the information in 【】.  
                 '''
 
@@ -551,6 +551,7 @@ def input_page(st, **state):
             st.session_state.page = "two"
             st.session_state.choice = choice
             st.session_state.language = language
+            st.session_state.tone = options_2
       
 def compute_page(st, **state):
     st.markdown("""
@@ -661,7 +662,8 @@ def compute_page(st, **state):
         query = response
         messages =  [
                         {'role':'system',
-                        'content': system_message_2 + "keep it within {} words.".format(st.session_state.audio_length * 60)},
+                        'content': system_message_2 + "keep it within {} words.".format(st.session_state.audio_length * 60)\
+                        + "make the script in {} way".format(st.session_state.tone)},
                         {'role':'user',
                         'content': f"【{query}】"},]
         summary = get_completion_from_messages(messages)
@@ -936,7 +938,9 @@ def main():
 
     if "audio_length" not in st.session_state:
         st.session_state.audio_length = '5'
-    
+      
+    if "tone" not in st.session_state:
+        st.session_state.tone = ' '
 
 
     # 根据session状态来渲染页面
