@@ -432,7 +432,7 @@ def input_page(st, **state):
         with col4a:
             col1a, col2a, col8a = st.columns([3,1,3])
             with col1a:
-                st.write("**Options:**")
+                st.write("**Options🔘:**")
         with col5a:
             pass
 
