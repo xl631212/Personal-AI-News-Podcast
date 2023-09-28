@@ -579,7 +579,7 @@ def compute_page(st, **state):
         query = response
         messages =  [
                         {'role':'system',
-                        'content': system_message_2 + "keep it within {} words.".format(st.session_state.audio_length * 60)\
+                        'content': system_message_2 + "keep the length of the script within {} words.".format(st.session_state.audio_length * 60)\
                         + "make the script in {} way".format(st.session_state.tone)},
                         {'role':'user',
                         'content': f"【{query}】"},]
