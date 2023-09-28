@@ -459,20 +459,19 @@ def input_page(st, **state):
             st.session_state.day = str(number_of_days) + 'd'
 
     st.markdown("""
-        <style>
-            .footer {
-                position: fixed;
-                bottom: 0;
-                right: 0;
-                width: auto;
-                background-color: transparent;
-                text-align: left;
-                padding-right: 10px;
-                padding-bottom: 10px;
-            }
-        </style>
-        <div class="footer">Made with ❤️ by Xuying Li</div>
-    """, unsafe_allow_html=True)
+    <style>
+        .top-left {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: auto;
+            background-color: transparent;
+            text-align: left;
+        }
+    </style>
+    <div class="top-left">Made with ❤️ by Xuying Li</div>
+""", unsafe_allow_html=True)
+
         
       
 def compute_page(st, **state):
