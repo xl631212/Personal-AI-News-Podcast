@@ -610,7 +610,8 @@ def compute_page(st, **state):
     query = query.replace('<|endoftext|>', '')
     messages =  [
                     {'role':'system',
-                    'content': system_message},
+                    'content': system_message+ "keep the length of the script within {} words.".format(st.session_state.audio_length * 60)\
+                        + "make the script in {} way".format(st.session_state.tone)},
                     {'role':'user',
                     'content': f"【{query}】"},]
     response = get_completion_from_messages(messages)
@@ -628,8 +629,7 @@ def compute_page(st, **state):
         query = response
         messages =  [
                         {'role':'system',
-                        'content': system_message_2 + "keep the length of the script within {} words.".format(st.session_state.audio_length * 60)\
-                        + "make the script in {} way".format(st.session_state.tone)},
+                        'content': system_message_2},
                         {'role':'user',
                         'content': f"【{query}】"},]
         summary = get_completion_from_messages(messages)
