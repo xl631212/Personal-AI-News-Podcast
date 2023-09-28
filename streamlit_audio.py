@@ -483,7 +483,7 @@ def compute_page(st, **state):
     """, 
     unsafe_allow_html=True
     )
-    st.markdown("<h3 style='text-align: center; color: black;'>Empower Your Day with Real-Time Insights: Leveraging AI for Instant News and Podcast Updates.</h2>", unsafe_allow_html=True)
+   
     st.markdown("""
     <style>
         /* This styles the main content excluding h1 and h2 */
