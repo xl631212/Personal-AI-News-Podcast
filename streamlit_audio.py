@@ -466,7 +466,7 @@ def input_page(st, **state):
                 right: 0;
                 width: auto;
                 background-color: transparent;
-                text-align: right;
+                text-align: left;
                 padding-right: 10px;
                 padding-bottom: 10px;
             }
