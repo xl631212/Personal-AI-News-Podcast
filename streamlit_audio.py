@@ -372,7 +372,7 @@ def input_page(st, **state):
 
     st.markdown("""
         <h4 style='text-align: center; color: gray;'>
-            Choose your preferred options at the bottom, then double-click 👆 the button below to initiate. 
+            Choose your preferred options🔘 at the bottom, then double-click 👆 the button below to initiate. 
                 <br>
                 Sit back and relax while we craft your personalized LLM podcast within <span style='color: blue; font-size: 1.2em;'>3 mins</span>.
         </h4>
@@ -391,7 +391,7 @@ def input_page(st, **state):
         with col4a:
             col1a, col2a, col8a = st.columns([3,1,3])
             with col1a:
-                st.write("**Options:**")
+                st.write("**Options🔘:**")
         with col5a:
             pass
 
