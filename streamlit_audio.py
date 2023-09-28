@@ -392,7 +392,7 @@ def input_page(st, **state):
         <style>
             .stButton > button {
                 font-size: 100px;
-                width: 45%;  /* 设置一个固定的宽度 */
+                width: 35%;  /* 设置一个固定的宽度 */
                 height: 70px; /* 设置一个固定的高度 */
                 color: white;
                 background-color: #FF4B4B;
