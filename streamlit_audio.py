@@ -786,7 +786,7 @@ def compute_page(st, **state):
 
 
         st.subheader('播客与演讲', divider='orange')
-        lexi_boardcast = lexi_boardcast.replace('<|endoftext|>', '')
+        lexi_boardcast = a16z_blog.replace('<|endoftext|>', '')
         messages =  [
                         {'role':'system',
                         'content': system_message_3},
@@ -798,7 +798,7 @@ def compute_page(st, **state):
                         {'role':'system',
                         'content': system_message_3},
                         {'role':'user',
-                        'content': f"{L_title}"},]
+                        'content': f"{a16z_title}"},]
         L_title = get_completion_from_messages(messages)
 
         st.markdown(f'<a href="https://www.youtube.com/@lexfridman/videos" style="color:  #2859C0; text-decoration: none; \
