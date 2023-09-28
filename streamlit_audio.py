@@ -423,7 +423,7 @@ def input_page(st, **state):
         with col3:
             pass
         with col4:
-            col1, col2 = st.columns(2)
+            col1, col2, col8 = st.columns([3,1,3])
             with col1:
                 language = st.selectbox(
                     "Language",
@@ -433,7 +433,8 @@ def input_page(st, **state):
                 audio_length = st.slider('Audio length (minutes)', 2, 6)
                 st.session_state.audio_length = audio_length
 
-            with col2:
+            
+            with col8:
                 options_2 = st.selectbox(
                     'In a tone of',
                     ['News', 'Enthusiastic', 'Humor'],
