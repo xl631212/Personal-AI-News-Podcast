@@ -363,39 +363,35 @@ def heacker_news_content():
 def input_page(st, **state):
     
     st.markdown(
-    """
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    """,
-    unsafe_allow_html=True,
-    )
-
-    # Style and position the GitHub icon at the top left corner
-    st.markdown(
         """
-        <style>
-            .github-corner {
-                position: absolute;
-                bottom: 10px;
-                left: 10px;
-                z-index: 1000;
-            }
-            .github-corner a i {
-            color: #6c6c6c;  # Set color of the icon
-        }
-        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         """,
         unsafe_allow_html=True,
     )
-    
-    # Add the GitHub icon with a hyperlink
-    github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
+
+    # Style and position the GitHub and Twitter icons at the bottom left corner
     st.markdown(
         """
-        <div class="github-corner">
-            <a href="{github_url}" target="_blank"><i class="fab fa-github fa-2x"></i></a>
-        </div>""",
-        unsafe_allow_html=True,
-    )
+        <style>
+            .social-icons {
+                position: fixed;
+                buttom: 10px;
+                left: 10px;
+                z-index: 1000;
+                display: flex;
+                gap: 10px;  # Space between icons
+            }
+            .social-icons a i {
+                color: #6c6c6c;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # Add the GitHub and Twitter icons with hyperlinks
+    github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
+    twitter_url = "https://twitter.com/your_username"  # replace with your Twitter profile URL
     
     st.markdown("""
     <h1 style='text-align: center; color: black;'>
