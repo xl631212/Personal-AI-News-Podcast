@@ -151,7 +151,7 @@ def autoplay_audio(file_path: str):
         data = f.read()
         b64 = base64.b64encode(data).decode()
         md = f"""
-            <audio controls style="width: 100%;">
+            <audio controls autoplay style="width: 100%;">
             <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
             </audio>
             """
@@ -375,7 +375,7 @@ def input_page(st, **state):
         <style>
             .social-icons {
                 position: fixed;
-                top: 10px;
+                buttom: 10px;
                 left: 10px;
                 z-index: 1000;
                 display: flex;
@@ -390,9 +390,19 @@ def input_page(st, **state):
         )
 
     # Add the GitHub and Twitter icons with hyperlinks
-    github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
+    github_url = "https://github.com/your_username/your_repo"  # replace with your GitHub repo URL
     twitter_url = "https://twitter.com/your_username"  # replace with your Twitter profile URL
-    
+
+    st.markdown(
+        """
+        <div class="social-icons">
+            <a href="{github_url}" target="_blank"><i class="fab fa-github fa-2x"></i></a>
+            <a href="{twitter_url}" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
     st.markdown("""
     <h1 style='text-align: center; color: black;'>
         Your Personal <span style='color: #FF4B4B; font-size: 1.25em;'>AI News</span> Podcast
@@ -400,7 +410,6 @@ def input_page(st, **state):
     """, 
     unsafe_allow_html=True
     )
-  
     st.markdown("<h3 style='text-align: center; color: black;'>Empower Your Day with Real-Time Insights: Leveraging AI for Instant News <br> and Podcast Updates.</h3>", unsafe_allow_html=True)
     st.markdown("""
         <h4 style='text-align: center; color: #6C6C6C;'>
@@ -423,7 +432,7 @@ def input_page(st, **state):
         with col4a:
             col1a, col2a, col8a = st.columns([3,1,3])
             with col1a:
-                st.write("**Options🔘:**")
+                st.write("**Options:**")
         with col5a:
             pass
 
@@ -459,7 +468,7 @@ def input_page(st, **state):
             }
         </style>
         """, unsafe_allow_html=True)
-
+    
 
     with st.container():
         col3, col4, col5= st.columns([4,7,4])
@@ -473,7 +482,7 @@ def input_page(st, **state):
                     ("English", "中文"),
                     key='ahaha'
                 )
-                audio_length = st.slider('Audio length (minutes)', 2, 6)
+                audio_length = st.slider('Audio length (minutes)', 2, 6, value=4)
                 st.session_state.audio_length = audio_length
 
             
@@ -483,9 +492,10 @@ def input_page(st, **state):
                     ['News', 'Enthusiastic', 'Humor'],
                     key='opt3'
                 )
-                number_of_days = st.slider('In a period of (days)', 1, 3)
+                st.session_state.day = st.slider('In a period of (days)', 1, 3, value=1)
         with col5:
             pass
+
 
     with button_placeholder:     
         # 创建按钮
@@ -493,21 +503,24 @@ def input_page(st, **state):
             st.session_state.page = "two"
             st.session_state.language = language
             st.session_state.tone = options_2
-            st.session_state.day = str(number_of_days) + 'd'
+
 
     st.markdown("""
-    <style>
-        .top-left {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            width: auto;
-            background-color: transparent;
-            text-align: left;
-        }
-    </style>
-    <div class="top-left">Made with ❤️ by Xuying Li</div>
-""", unsafe_allow_html=True)
+        <style>
+            .footer {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                width: auto;
+                background-color: transparent;
+                text-align: right;
+                padding-right: 10px;
+                padding-bottom: 10px;
+            }
+        </style>
+        <div class="footer">Made with ❤️ by Xuying Li</div>
+    """, unsafe_allow_html=True)
+        
 
         
       
