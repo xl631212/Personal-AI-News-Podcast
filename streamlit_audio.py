@@ -389,23 +389,33 @@ def input_page(st, **state):
 
     # Custom CSS to modify the button appearance
     st.markdown("""
-    <style>
-        .stButton>button {
-            width: 40%;
-            height: 70px;
-            color: white;
-            background-color: #FF4B4B;
-            border: none;
-            border-radius: 10px;
-            margin: auto;
-            font-weight: bold; 
-            font-size: 500px; 
-            display: flex;            /* Use flexbox */
-            justify-content: center;  /* Center children horizontally */
-            align-items: center;  
-        }
-    </style>
-    """, unsafe_allow_html=True)
+        <style>
+            .stButton > button {
+                font-size: 100px;
+                width: 45%;  /* 设置一个固定的宽度 */
+                height: 70px; /* 设置一个固定的高度 */
+                color: white;
+                background-color: #FF4B4B;
+                border: none;
+                border-radius: 15px;
+                margin: auto;
+                font-weight: bold; 
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .stButton > button:hover {
+                background-color: #FF6B6B; /* 为按钮添加简单的悬停效果 */
+            }
+
+            .stButton > button div p {
+                font-size: 25px;  /* 改变按钮文本的字号 */
+                margin: 0;  /* 移除段落的默认边距 */
+            }
+        </style>
+        """, unsafe_allow_html=True)
+  
 
     st.markdown("""
     <style>
@@ -526,26 +536,6 @@ def input_page(st, **state):
     """, unsafe_allow_html=True)
   
     with button_placeholder:
-        # 添加按钮样式
-        st.markdown("""
-        <style>
-            .stButton button {
-                font-size:50px;
-                width: 10%;
-                box-sizing: 5%;
-                height: 30em;
-                color: white;
-                background-color: #FF4B4B;
-                border: none;
-                border-radius: 10px;
-                margin: auto;
-                font-weight: bold; 
-                justify-content: center;
-                align-items: center;
-            }
-        </style>
-        """, unsafe_allow_html=True)
-            
         # 创建按钮
         if st.button("👆 Double-Click Generation"):
             st.session_state.page = "two"
