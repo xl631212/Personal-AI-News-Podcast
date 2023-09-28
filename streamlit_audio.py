@@ -361,20 +361,55 @@ def heacker_news_content():
     return content
 
 def input_page(st, **state):
+    
+    st.markdown(
+    """
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    """,
+    unsafe_allow_html=True,
+    )
+
+    # Style and position the GitHub icon at the top left corner
+    st.markdown(
+        """
+        <style>
+            .github-corner {
+                position: absolute;
+                bottom: 10px;
+                left: 10px;
+                z-index: 1000;
+            }
+            .github-corner a i {
+            color: #6c6c6c;  # Set color of the icon
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    
+    # Add the GitHub icon with a hyperlink
+    github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
+    st.markdown(
+        """
+        <div class="github-corner">
+            <a href="{github_url}" target="_blank"><i class="fab fa-github fa-2x"></i></a>
+        </div>""",
+        unsafe_allow_html=True,
+    )
+    
     st.markdown("""
     <h1 style='text-align: center; color: black;'>
-        Your Personal <span style='color: #FF4B4B; font-size: 1.30em;'>AI News</span> Podcast
+        Your Personal <span style='color: #FF4B4B; font-size: 1.25em;'>AI News</span> Podcast
     </h1>
     """, 
     unsafe_allow_html=True
     )
-    st.markdown("<h3 style='text-align: center; color: black;'>Empower Your Day with Real-Time Insights: Leveraging AI for Instant News <br> and Podcast Updates.</h2>", unsafe_allow_html=True)
-
+    st.markdown("<h3 style='text-align: center; color: black;'>Empower Your Day with Real-Time Insights: Leveraging AI for Instant News <br> and Podcast Updates.</h3>", unsafe_allow_html=True)
     st.markdown("""
-        <h4 style='text-align: center; color: gray;'>
-            Choose your preferred options🔘 at the bottom, then double-click 👆 the button below to initiate. 
+        <h4 style='text-align: center; color: #6C6C6C;'>
+            Choose your preferred options🔘 at the bottom, then double-click👆 the button below to initiate. 
                 <br>
-                Sit back and relax while we craft your personalized LLM podcast within <span style='color: blue; font-size: 1.2em;'>3 mins</span>.
+                Sit back and relax while we craft your personalized LLM podcast within <span style='color: #2859C0; font-size: 1.15em;'>3 mins</span>.
         </h4>
         <br><br>
         """, 
