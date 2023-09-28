@@ -369,32 +369,38 @@ def input_page(st, **state):
     unsafe_allow_html=True
     )
     st.markdown("<h3 style='text-align: center; color: black;'>Empower Your Day with Real-Time Insights: Leveraging AI for Instant News and Podcast Updates.</h2>", unsafe_allow_html=True)
-    st.markdown("""
-        <h4 style='text-align: center; color: gray;'>
-            Select <span style='color: red;'>⭕️</span> either of the modes at the bottom and double-click 👆 the button below. 
-            <br>
-            Wait for approximately <span style='color: blue; font-size: 1.2em;'>3 mins</span> to generate your personalized LLM podcast 🎙️
-        </h4>
-        """, 
-        unsafe_allow_html=True)
 
     st.markdown("""
         <h4 style='text-align: center; color: gray;'>
-            Choose your preferred mode at the bottom, then click the button to initiate. 
-                Sit back and relax while we craft your personalized LLM podcast within 3 minutes.
+            Choose your preferred options at the bottom, then double-click 👆 the button below to initiate. 
+                <br>
+                Sit back and relax while we craft your personalized LLM podcast within <span style='color: blue; font-size: 1.2em;'>3 mins</span>.
         </h4>
+        <br><br>
         """, 
         unsafe_allow_html=True)
-
+    
 
     button_placeholder = st.empty()
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    with st.container():
+        col3a, col4a, col5a= st.columns([4,7,4])
+        with col3a:
+            pass
+        with col4a:
+            col1a, col2a, col8a = st.columns([3,1,3])
+            with col1a:
+                st.write("**Options:**")
+        with col5a:
+            pass
 
     st.markdown("""
         <style>
             .stButton > button {
                 font-size: 100px;
                 width: 35%;  /* 设置一个固定的宽度 */
-                height: 70px; /* 设置一个固定的高度 */
+                height: 50px; /* 设置一个固定的高度 */
                 color: white;
                 background-color: #FF4B4B;
                 border: none;
@@ -419,11 +425,11 @@ def input_page(st, **state):
 
 
     with st.container():
-        col3, col4, col5= st.columns([3,7,3])
+        col3, col4, col5= st.columns([4,7,4])
         with col3:
             pass
         with col4:
-            col1, col2, col8 = st.columns([3,1,3])
+            col1, col2, col8 = st.columns([4,2,4])
             with col1:
                 language = st.selectbox(
                     "Language",
@@ -440,10 +446,9 @@ def input_page(st, **state):
                     ['News', 'Enthusiastic', 'Humor'],
                     key='opt3'
                 )
-                st.session_state.day = st.slider('In a period of (days)', 1, 3)
+                number_of_days = st.slider('In a period of (days)', 1, 3)
         with col5:
             pass
-
 
     with button_placeholder:     
         # 创建按钮
@@ -451,7 +456,7 @@ def input_page(st, **state):
             st.session_state.page = "two"
             st.session_state.language = language
             st.session_state.tone = options_2
-
+            st.session_state.day = str(number_of_days) + 'd'
 
     st.markdown("""
         <style>
@@ -536,7 +541,7 @@ def compute_page(st, **state):
         ariv_essay += result.summary
     
     my_bar.progress(60, text="Searching Google News...")
-    google_news = fetch_gnews_links(query='AI, LLM, Machine learning')
+    google_news = fetch_gnews_links(query='AI, LLM, Machine learning',  period=st.session_state.day)
 
     my_bar.progress(70, text="Searching Techcrunch...")
     url = "https://techcrunch.com/"
