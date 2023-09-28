@@ -510,7 +510,7 @@ def input_page(st, **state):
             .footer {
                 position: fixed;
                 bottom: 0;
-                right: 0;
+                left: 0;
                 width: auto;
                 background-color: transparent;
                 text-align: right;
@@ -866,7 +866,7 @@ def compute_page(st, **state):
     <style>
         .footer {
             position: fixed;
-            top: 0;
+            bottom: 0;
             left: 0;
             width: auto;
             background-color: transparent;
