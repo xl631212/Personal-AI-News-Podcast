@@ -8,6 +8,7 @@ Stay Ahead leverages Large Language Models (LLM) and web scraping techniques to 
   <img src="截屏2023-09-20 09.20.03.png" width="100%" />
 </p>
 
+## App Link：https://llmnewsletter-cup7ts82sxzkzyszvquh4l.streamlit.app/
 ## Features:
 
 1. **Real-time Content Aggregation**: Gathers the freshest research, blogs, discussions, and news related to AI.
