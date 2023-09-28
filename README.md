@@ -43,7 +43,7 @@ Stay Ahead leverages Large Language Models (LLM) and web scraping techniques to 
 
 As we continue to improve Stay Ahead, we have several exciting features and enhancements lined up:
 
-- [ ] **Add More Information Sources**: Integrate even more data sources to provide a comprehensive view of the latest developments in the field of AI.
+- [✅] **Add More Information Sources**: Integrate even more data sources to provide a comprehensive view of the latest developments in the field of AI.
    
 - [ ] **Advanced Settings**: Give users more control over their podcast experience with:
    - [ ] **2.1 Voice Duration**: Adjust the speed and length of the audio to fit your schedule.
