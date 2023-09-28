@@ -814,21 +814,20 @@ def compute_page(st, **state):
                 ', unsafe_allow_html=True)
             st.markdown(result_summary)
     st.markdown("""
-        <style>
-            .footer {
-                position: fixed;
-                bottom: 0;
-                right: 0;
-                width: auto;
-                background-color: transparent;
-                text-align: right;
-                padding-right: 10px;
-                padding-bottom: 10px;
-            }
-        </style>
-        <div class="footer">Made with ❤️ by Xuying Li</div>
-    """, unsafe_allow_html=True)
-
+    <style>
+        .footer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: auto;
+            background-color: transparent;
+            text-align: left;
+            padding-left: 10px;
+            padding-top: 10px;
+        }
+    </style>
+    <div class="footer">Made with ❤️ by Xuying Li</div>
+""", unsafe_allow_html=True)
 
 def page_one():
     input_page(st)
