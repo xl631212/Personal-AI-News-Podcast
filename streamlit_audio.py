@@ -448,12 +448,17 @@ def input_page(st, **state):
             }
 
             .stButton > button:hover {
-                background-color: #FF6B6B; /* 为按钮添加简单的悬停效果 */
+                background-color: #EFEFEF; /* 为按钮添加简单的悬停效果 */
+                color: #9A9A9A;
             }
 
             .stButton > button div p {
-                font-size: 25px;  /* 改变按钮文本的字号 */
+                font-size: 24px;  /* 改变按钮文本的字号 */
                 margin: 0;  /* 移除段落的默认边距 */
+            }
+                
+            .stButton > button div p:hover {
+                font-size: 20px;
             }
         </style>
         """, unsafe_allow_html=True)
