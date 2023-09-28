@@ -587,7 +587,7 @@ def compute_page(st, **state):
     bair_blog = summarize_website_content(link)
 
 
-    my_bar.progress(15, text="Searching for a16z Blog...")
+    my_bar.progress(15, text="Searching for Machine Learning Street Talk...")
     channel_id = "UCMLtBahI5DMrt0NPvDSoIRQ"
     playlist = Playlist(playlist_from_channel_id(channel_id))
     while playlist.hasMoreVideos:
@@ -606,12 +606,7 @@ def compute_page(st, **state):
     my_bar.progress(30, text="Searching for Apple Blog...")
     Apple_blog = summarize_website_content('https://machinelearning.apple.com/')
     
-    my_bar.progress(40, text='Searching for lexi friman boardcast...')
-    url = "https://lexfridman.com/podcast/"
-    link = get_transcript_link(url)
-    L_title = get_h1_text(link)
-    youtube_link = get_youtube_link(url)
-    lexi_boardcast = summarize_website_content(youtube_link)
+
 
     my_bar.progress(50, text="Searching for arxiv ...")
     search = arxiv.Search(
@@ -710,11 +705,6 @@ def compute_page(st, **state):
         st.markdown(h_content)
 
         st.subheader('Podcast and Speeches', divider='orange')
-
-        st.markdown(f'<a href="https://lexfridman.com/podcast/" style="color:  #2859C0; text-decoration: none; \
-            font-size: 20px;font-weight: bold;">{L_title}</a>\
-                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lex Fridman</span>', unsafe_allow_html=True)
-        st.markdown(lexi_boardcast)
 
         st.markdown(f'<a href="https://blogs.nvidia.com/ai-podcast/" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;">The AI Podcast</a>\
