@@ -363,20 +363,28 @@ def heacker_news_content():
 def input_page(st, **state):
     st.markdown("""
     <h1 style='text-align: center; color: black;'>
-        LLM <span style='color: #FF4B4B; font-size: 0.85em;'>Personal Podcast</span>
+        Your Personal <span style='color: #FF4B4B; font-size: 1.30em;'>AI News</span> Podcast
     </h1>
     """, 
     unsafe_allow_html=True
     )
-    st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: black;'>Empower Your Day with Real-Time Insights: Leveraging AI for Instant News and Podcast Updates.</h2>", unsafe_allow_html=True)
     st.markdown("""
-    <h4 style='text-align: center; color: black;'>
-        Select <span style='color: red;'>⭕️</span> either of the modes at the bottom and double-click 👆 the button below. 
-        <br>
-        Wait for approximately <span style='color: blue; font-size: 1.2em;'>3 mins</span> to generate your personalized LLM podcast
-    </h4>
-    """, 
-    unsafe_allow_html=True)
+        <h4 style='text-align: center; color: gray;'>
+            Select <span style='color: red;'>⭕️</span> either of the modes at the bottom and double-click 👆 the button below. 
+            <br>
+            Wait for approximately <span style='color: blue; font-size: 1.2em;'>3 mins</span> to generate your personalized LLM podcast 🎙️
+        </h4>
+        """, 
+        unsafe_allow_html=True)
+
+    st.markdown("""
+        <h4 style='text-align: center; color: gray;'>
+            Choose your preferred mode at the bottom, then click the button to initiate. 
+                Sit back and relax while we craft your personalized LLM podcast within 3 minutes.
+        </h4>
+        """, 
+        unsafe_allow_html=True)
 
 
     # Custom CSS to modify the button appearance
@@ -545,8 +553,14 @@ def input_page(st, **state):
             st.session_state.language = language
       
 def compute_page(st, **state):
-    st.markdown("<h1 style='text-align: center; color: black;'>LLM <span style='color: #FF4B4B;'>Personal Podcast</span></h1>", unsafe_allow_html=True)
-    st.markdown("<h2 style='text-align: center; color: black;'>Stay Ahead: Real-time News and Podcasts with LLM </h2>", unsafe_allow_html=True)
+    st.markdown("""
+    <h1 style='text-align: center; color: black;'>
+        Your Personal <span style='color: #FF4B4B; font-size: 1.30em;'>AI News</span> Podcast
+    </h1>
+    """, 
+    unsafe_allow_html=True
+    )
+    st.markdown("<h3 style='text-align: center; color: black;'>Empower Your Day with Real-Time Insights: Leveraging AI for Instant News and Podcast Updates.</h2>", unsafe_allow_html=True)
     st.markdown("""
     <style>
         /* This styles the main content excluding h1 and h2 */
