@@ -387,7 +387,8 @@ def input_page(st, **state):
         unsafe_allow_html=True)
 
 
-    # Custom CSS to modify the button appearance
+    button_placeholder = st.empty()
+
     st.markdown("""
         <style>
             .stButton > button {
@@ -415,133 +416,58 @@ def input_page(st, **state):
             }
         </style>
         """, unsafe_allow_html=True)
-  
 
-    st.markdown("""
-    <style>
-        .stRadio > div[role="radiogroup"] {
-            justify-content: center;
-        }
-        .stRadio > div[role="radiogroup"] > label{
-            font-size: 1000px !important;
-        }
-    </style>
-    """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <style>
-        .stSelectbox {
-            width: 10% !important;
-            margin-left: calc(50% - 20%) !important;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-
-    button_placeholder = st.empty()
-
-    choice = st.radio(
-        "",
-        ["Auto-generation (recommended for first-time use)", "Advanced setting"],
-        key="visibility",
-        disabled=False,
-        horizontal=True,
-    )
-    st.markdown("""
-        <style>
-            .stSelectbox {
-                width: 30% !important;
-                margin: 0 auto !important;
-            }
-        </style>
-        """, unsafe_allow_html=True)
-    
-    language_placeholder = st.empty()
-    with language_placeholder:
-        language = st.selectbox(
-            "Language",  # Removing the label here as we manually placed it in the left column
-            ("English",  "中文"))
-    
-
-    if choice == 'Advanced setting':
-        language_placeholder.empty()
-        # CSS to adjust column content alignment and container width
-        st.markdown("""
-        <style>
-            .centered-container {
-                width: 40% !important;
-                margin: 0 auto !important;
-            }
-
-            .col1-content {
-                text-align: right !important;
-            }
-            .col2-content {
-                text-align: left !important;
-            }
-        </style>
-        """, unsafe_allow_html=True)
-
-        # Using a container to center content
-        with st.container():
-            st.markdown("<div class='centered-container'>", unsafe_allow_html=True)
-            
-            col1, col2 = st.columns([3,4])
-
+    with st.container():
+        col3, col4, col5= st.columns([3,7,3])
+        with col3:
+            pass
+        with col4:
+            col1, col2 = st.columns(2)
             with col1:
-                st.markdown("<div class='col1-content'>", unsafe_allow_html=True)
                 language = st.selectbox(
                     "Language",
                     ("English", "中文"),
                     key='ahaha'
                 )
-                audio_length = st.selectbox(
-                    'Audio Length',
-                    ['1 min', '3 min', '5 min'],
-                    key='opt2'
-                )
+                audio_length = st.slider('Audio length (minutes)', 2, 6)
                 st.session_state.audio_length = audio_length
-                st.markdown("</div>", unsafe_allow_html=True)
-            
+
             with col2:
-                st.markdown("<div class='col2-content'>", unsafe_allow_html=True)
                 options_2 = st.selectbox(
                     'In a tone of',
                     ['News', 'Enthusiastic', 'Humor'],
                     key='opt3'
                 )
-                time_period = st.selectbox(
-                    'In a period of',
-                    ['Today', 'Yesterday'],
-                    key='opt4'
-                )
-                st.markdown("</div>", unsafe_allow_html=True)
+                st.session_state.day = st.slider('In a period of (days)', 1, 3)
+        with col5:
+            pass
 
-            st.markdown("</div>", unsafe_allow_html=True)
 
-    # 将自定义的角标添加到右上角
+    with button_placeholder:     
+        # 创建按钮
+        if st.button("👆 Double-Click Generation"):
+            st.session_state.page = "two"
+            st.session_state.language = language
+            st.session_state.tone = options_2
+
+
     st.markdown("""
         <style>
             .footer {
                 position: fixed;
-                top: 0;
+                bottom: 0;
                 right: 0;
                 width: auto;
                 background-color: transparent;
                 text-align: right;
                 padding-right: 10px;
-                padding-top: 10px;
+                padding-bottom: 10px;
             }
         </style>
         <div class="footer">Made with ❤️ by Xuying Li</div>
     """, unsafe_allow_html=True)
-  
-    with button_placeholder:
-        # 创建按钮
-        if st.button("👆 Double-Click Generation"):
-            st.session_state.page = "two"
-            st.session_state.choice = choice
-            st.session_state.language = language
-            st.session_state.tone = options_2
+        
       
 def compute_page(st, **state):
     st.markdown("""
@@ -921,6 +847,9 @@ def main():
       
     if "tone" not in st.session_state:
         st.session_state.tone = ' '
+      
+    if "day" not in st.session_state:
+        st.session_state.day = ' '
 
 
     # 根据session状态来渲染页面
