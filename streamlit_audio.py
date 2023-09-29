@@ -758,10 +758,8 @@ def compute_page(st, **state):
         #audio_file = open('hello.mp3', 'rb')
         #audio_bytes = audio_file.read()
         #st.audio(audio_bytes, format='wav')
-        if st.session_state.language == 'English':
-          autoplay_audio("hello.mp3")
-        else:
-          autoplay_audio("hello2.mp3")
+        autoplay_audio("hello.mp3")
+        
 
     my_bar.empty()
     if st.session_state.language == 'English':
