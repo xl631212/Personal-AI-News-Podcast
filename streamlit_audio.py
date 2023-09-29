@@ -633,6 +633,18 @@ def compute_page(st, **state):
     A_title, A_link = get_latest_aws_ml_blog()
     mit_blog = summarize_website_content(A_link)
 
+    my_bar.progress(30, text="Searching for Apple Blog...")
+    url = 'https://machinelearning.apple.com/'
+    
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    # 根据提供的HTML片段，定位到文章的标题和链接
+    article = soup.select_one('h3.post-title a')
+    apple_link = 'https://machinelearning.apple.com'+ article['href']
+    
+    Apple_blog_title = article.text
+    Apple_blog = summarize_website_content(apple_link)
 
     my_bar.progress(40, text='Searching for lexi friman boardcast...')
     url = "https://lexfridman.com/podcast/"
@@ -664,6 +676,12 @@ def compute_page(st, **state):
     data_mrf_link, h_title = articles[0]['href'],articles[0].text
     h_content = summarize_website_content(data_mrf_link)
 
+    my_bar.progress(75, text="Nvidia Podcast...")
+    url = "https://blogs.nvidia.com/ai-podcast/"
+    target_link = "https://blogs.nvidia.com/ai-podcast/"
+    target_text = "AI Podcast"
+    next_link, Nvidia_title = find_next_link_text(url, target_link, target_text)
+    n_content = summarize_website_content(next_link)
 
     my_bar.progress(80, text="Writing Newsletter...")
     print(google_news['summary'], bair_blog, mit_blog, openai_blog, ariv_essay)
@@ -679,8 +697,6 @@ def compute_page(st, **state):
     response = get_completion_from_messages(messages)
     
     my_bar.progress(90, text="Generating Podcast...")
-    command = f'edge-tts --text "{response}" --write-media hello.mp3'
-    subprocess.run(command, shell=True)
     if st.session_state.language == 'English':
         command = f'edge-tts --text "{response}" --write-media hello.mp3'
         subprocess.run(command, shell=True)
@@ -745,6 +761,11 @@ def compute_page(st, **state):
             font-size: 20px;font-weight: bold;">{L_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lex Fridman</span>', unsafe_allow_html=True)
         st.markdown(lexi_boardcast)
+
+        st.markdown(f'<a href="{next_link}" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{Nvidia_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Nvidia</span>', unsafe_allow_html=True)
+        st.markdown(n_content)
       
         st.subheader('Technology Blogs', divider='green')
         st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
@@ -762,6 +783,12 @@ def compute_page(st, **state):
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Amazon</span>', unsafe_allow_html=True)
         st.markdown(mit_blog)
 
+        st.markdown(
+            f'<a href={apple_link} style="color:  #2859C0; text-decoration: none; font-size: 20px; font-weight: bold;">{Apple_blog_title}</a>\
+            <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Apple</span>', 
+            unsafe_allow_html=True
+        )
+        st.markdown(Apple_blog)
 
 
         st.subheader('Cutting-edge Papers', divider='green')
