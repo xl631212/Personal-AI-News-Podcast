@@ -7,7 +7,7 @@ playwright
 tiktoken
 doctran
 langchain==0.0.164
-edge-tts
+edge-tts==6.1.8
 arxiv
 twint
 youtube-search-python
