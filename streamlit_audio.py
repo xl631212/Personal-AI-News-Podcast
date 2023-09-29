@@ -478,7 +478,7 @@ def input_page(st, **state):
             with col8:
                 options_2 = st.selectbox(
                     'In a tone of',
-                    ['News', 'Enthusiastic', 'Humor'],
+                    ['Professional', 'Enthusiastic', 'Humor'],
                     key='opt3'
                 )
                 st.session_state.day = st.slider('In a period of (days)', 1, 3, value=1)
