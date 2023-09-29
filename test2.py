@@ -32,7 +32,6 @@ os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
 os.environ["OPENAI_API_KEY"]= st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
-
 system_message = '''
                 You are a very talented editor, skilled at consolidating 
                 fragmented information and introductions into a cohesive script, without missing any details.
