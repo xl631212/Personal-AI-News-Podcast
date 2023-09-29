@@ -28,9 +28,8 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain.schema import Document
 
 
-os.environ["SERPER_API_KEY"] = "c2973e70fb0e4d0a1e756b260cdbf0bc56ccdb56"
-os.environ["serper_api_key"]= "c2973e70fb0e4d0a1e756b260cdbf0bc56ccdb56"
-os.environ["OPENAI_API_KEY"] = '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'
+os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
+os.environ["OPENAI_API_KEY"]= st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
 
