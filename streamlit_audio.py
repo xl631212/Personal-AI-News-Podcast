@@ -718,14 +718,10 @@ def compute_page(st, **state):
                     {'role':'user',
                     'content': f"【{query}】"},]
     response = get_completion_from_messages(messages)
-
+    command = f'edge-tts --text "{response}" --write-media hello.mp3'
+    subprocess.run(command, shell=True)
     my_bar.progress(90, text="Generating Podcast...")
     if st.session_state.language == 'English':
-        updated_text = response
-        # 构建 edge-tts 命令
-        command = f'edge-tts --text "{response}" --write-media hello.mp3'
-        # 使用 subprocess 运行命令
-        subprocess.run(command, shell=True)
 
         my_bar.progress(90, text="Generating Summary...")
 
@@ -747,7 +743,7 @@ def compute_page(st, **state):
                         'content': f"【{before}】"},]
         after = get_completion_from_messages(messages)
         # 构建 edge-tts 命令
-        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello.mp3'
+        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello2.mp3'
         # 使用 subprocess 运行命令
         subprocess.run(command, shell=True)
 
@@ -758,7 +754,10 @@ def compute_page(st, **state):
         #audio_file = open('hello.mp3', 'rb')
         #audio_bytes = audio_file.read()
         #st.audio(audio_bytes, format='wav')
-        autoplay_audio("hello.mp3")
+        if st.session_state.language == 'English':
+          autoplay_audio("hello.mp3")
+        else:
+          autoplay_audio("hello2.mp3")
         
 
     my_bar.empty()
