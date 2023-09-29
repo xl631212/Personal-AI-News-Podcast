@@ -27,7 +27,6 @@ from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
 
 
-
 os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
 os.environ["OPENAI_API_KEY"]= st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
