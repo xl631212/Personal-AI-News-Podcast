@@ -788,6 +788,15 @@ def compute_page(st, **state):
             
 
     elif st.session_state.language == '中文':
+        st.subheader('摘要与评论', divider='rainbow')
+        summary = before.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"{summary}"},]
+        summary = get_completion_from_messages(messages)
+        st.markdown(summary)
         
         st.subheader('科技新闻', divider='rainbow')
         for i in range(len(google_news['title'])):
