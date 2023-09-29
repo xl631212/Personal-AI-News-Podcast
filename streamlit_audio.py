@@ -282,24 +282,21 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     Returns:
     - The summarized content.
     """
-    if is_link_accessible(url):
-        # Load the content from the given URL
-        loader = WebBaseLoader(url)
-        docs = loader.load()
+    # Load the content from the given URL
+    loader = WebBaseLoader(url)
+    docs = loader.load()
 
-        # Initialize the ChatOpenAI model
-        llm = ChatOpenAI(temperature=temperature, model_name=model_name)
-        
-        # Load the summarization chain
-        chain = load_summarize_chain(llm, chain_type=chain_type)
-
-        # Run the chain on the loaded documents
-        summarized_content = chain.run(docs)
-        
-        return summarized_content
+    # Initialize the ChatOpenAI model
+    llm = ChatOpenAI(temperature=temperature, model_name=model_name)
     
-    else:
-        return 'No result'
+    # Load the summarization chain
+    chain = load_summarize_chain(llm, chain_type=chain_type)
+
+    # Run the chain on the loaded documents
+    summarized_content = chain.run(docs)
+    
+    return summarized_content
+    
 
 
 def get_transcript_link(url):
