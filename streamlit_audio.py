@@ -27,6 +27,7 @@ from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
 from langchain.schema import Document
 
+
 os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
 os.environ["OPENAI_API_KEY"]= st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -35,6 +36,20 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 system_message = '''
                 You are a very talented news editor, skilled at consolidating 
                 fragmented information and introductions into a cohesive news script, without missing any details.
+                Compile the news article based on the information in 【】.  
+                '''
+
+system_message_2 = '''
+                You are a linguist, skilled in summarizing textual content and presenting it in 3 bullet points using markdown. 
+                '''
+
+system_message_3 = '''
+                你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
+                '''
+
+system_message = '''
+                You are a very talented editor, skilled at consolidating 
+                fragmented information and introductions into a cohesive script, without missing any details.
                 Compile the news article based on the information in 【】.  
                 '''
 
@@ -227,7 +242,7 @@ def summarize_documents(split_docs):
 
 def get_completion_from_messages(messages,
                                  model="gpt-3.5-turbo-16k",
-                                 temperature=0.5, max_tokens=8000):
+                                 temperature=0.5, max_tokens=7000):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
@@ -236,7 +251,7 @@ def get_completion_from_messages(messages,
     )
     return response.choices[0].message["content"]
 
-def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
+def fetch_gnews_links(query, language='en', country='US', period='2d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
     """
     Fetch news links from Google News based on the provided query.
 
@@ -282,21 +297,24 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     Returns:
     - The summarized content.
     """
-    # Load the content from the given URL
-    loader = WebBaseLoader(url)
-    docs = loader.load()
+    if True:
+        # Load the content from the given URL
+        loader = WebBaseLoader(url)
+        docs = loader.load()
 
-    # Initialize the ChatOpenAI model
-    llm = ChatOpenAI(temperature=temperature, model_name=model_name)
-    
-    # Load the summarization chain
-    chain = load_summarize_chain(llm, chain_type=chain_type)
+        # Initialize the ChatOpenAI model
+        llm = ChatOpenAI(temperature=temperature, model_name=model_name)
+        
+        # Load the summarization chain
+        chain = load_summarize_chain(llm, chain_type=chain_type)
 
-    # Run the chain on the loaded documents
-    summarized_content = chain.run(docs)
+        # Run the chain on the loaded documents
+        summarized_content = chain.run(docs)
+        
+        return summarized_content
     
-    return summarized_content
-    
+    else:
+        return 'No result'
 
 
 def get_transcript_link(url):
@@ -384,18 +402,6 @@ def get_all_text_from_url(url):
 def contains_keywords(s):
     keywords = ["AI", "GPT", "LLM"]
     return any(keyword in s for keyword in keywords)
-
-
-def heacker_news_content():
-    hn = HackerNews()
-    content = {'title':[], 'summary':[], 'url':[]}
-    for news in hn.top_stories()[:25]:
-        if contains_keywords(hn.item(news).title):
-            if 'url' in dir(hn.item(news)):
-                content['title'].append(hn.item(news).title)
-                content['url'].append(hn.item(news).url)
-                content['summary'].append(summarize_website_content(hn.item(news).url))
-    return content
 
 
 def input_page(st, **state):
@@ -687,49 +693,6 @@ def compute_page(st, **state):
 
     my_bar.progress(90, text="Generating Podcast...")
     if st.session_state.language == 'English':
-        updated_text = str(response)
-        # 构建 edge-tts 命令
-        command = f'edge-tts --text "{updated_text}" --write-media hello.mp3'
-        # 使用 subprocess 运行命令
-        subprocess.run(command, shell=True)
-
-        my_bar.progress(90, text="Generating Summary...")
-
-        query = response
-        messages =  [
-                        {'role':'system',
-                        'content': system_message_2},
-                        {'role':'user',
-                        'content': f"【{query}】"},]
-        summary = get_completion_from_messages(messages)
-    
-    else:
-        before = response
-        before = before.replace('<|endoftext|>', '')
-        messages =  [
-                        {'role':'system',
-                        'content': system_message_3},
-                        {'role':'user',
-                        'content': f"【{before}】"},]
-        after = get_completion_from_messages(messages)
-        # 构建 edge-tts 命令
-        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello.mp3'
-        # 使用 subprocess 运行命令
-        subprocess.run(command, shell=True)
-
-
-    my_bar.progress(100, text="Almost there...")
-
-    with radio_placeholder:
-        #audio_file = open('hello.mp3', 'rb')
-        #audio_bytes = audio_file.read()
-        #st.audio(audio_bytes, format='wav')
-        autoplay_audio("hello.mp3")
-    
-
-    my_bar.empty()
-
-    if st.session_state.language == 'English':
         st.subheader('Summary and Commentary', divider='rainbow')
         st.markdown(summary)
 
@@ -799,6 +762,14 @@ def compute_page(st, **state):
 
     elif st.session_state.language == '中文':
         st.subheader('摘要与评论', divider='rainbow')
+        summary = summary.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"{summary}"},]
+        summary = get_completion_from_messages(messages)
+        st.markdown(summary)
 
         st.subheader('科技新闻', divider='rainbow')
         for i in range(len(google_news['title'])):
