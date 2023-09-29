@@ -657,9 +657,12 @@ def compute_page(st, **state):
     google_news = fetch_gnews_links(query='AI, LLM, Machine learning',  period=st.session_state.day)
 
     my_bar.progress(70, text="Searching Techcrunch...")
-    url = "https://techcrunch.com/"
-    class_name = 'post-block__title__link'
-    data_mrf_link, h_title = extract_data_from_url(url, class_name)
+    url = 'https://techcrunch.com/category/artificial-intelligence/'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    articles = soup.select('.post-block__title a')
+
+    data_mrf_link, h_title = articles[0]['href'],articles[0].text
     h_content = summarize_website_content(data_mrf_link)
 
     my_bar.progress(75, text="Nvidia Podcast...")
