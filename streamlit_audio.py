@@ -747,7 +747,7 @@ def compute_page(st, **state):
                         'content': f"【{before}】"},]
         after = get_completion_from_messages(messages)
         # 构建 edge-tts 命令
-        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello2.mp3'
+        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello.mp3'
         # 使用 subprocess 运行命令
         subprocess.run(command, shell=True)
 
@@ -999,7 +999,7 @@ def main():
         st.session_state.choice = ""
     
     if "language" not in st.session_state:
-        st.session_state.language = ""
+        st.session_state.language = "English"
 
     if "audio_length" not in st.session_state:
         st.session_state.audio_length = '5'
