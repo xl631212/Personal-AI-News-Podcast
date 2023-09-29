@@ -612,8 +612,8 @@ def compute_page(st, **state):
 
     my_bar.progress(10, text="Searching for Microsoft Blog...")
     url = "https://blogs.microsoft.com/"
-    M_title, link = extract_blog_link_info(url)
-    bair_blog = summarize_website_content(link)
+    M_title, Microsoft_link = extract_blog_link_info(url)
+    bair_blog = summarize_website_content(Microsoft_link)
 
 
     my_bar.progress(15, text="Searching for Machine Learning Street Talk...")
@@ -766,7 +766,7 @@ def compute_page(st, **state):
                 <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Openai</span>', unsafe_allow_html=True)
         st.markdown(openai_blog)  
 
-        st.markdown(f'<a href={link} style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href={Microsoft_link} style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {M_title}</a>\
                 <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Microsoft</span>', unsafe_allow_html=True)
         st.markdown(bair_blog)
