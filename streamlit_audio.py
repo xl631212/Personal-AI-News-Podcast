@@ -747,16 +747,9 @@ def compute_page(st, **state):
                         'content': f"【{before}】"},]
         after = get_completion_from_messages(messages)
         # 构建 edge-tts 命令
-        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello.mp3'
+        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello2.mp3'
         # 使用 subprocess 运行命令
         subprocess.run(command, shell=True)
-        query = response
-        messages =  [
-                        {'role':'system',
-                        'content': system_message_3},
-                        {'role':'user',
-                        'content': f"【{query}】"},]
-        summary = get_completion_from_messages(messages)
 
 
     my_bar.progress(100, text="Almost there...")
@@ -765,7 +758,10 @@ def compute_page(st, **state):
         #audio_file = open('hello.mp3', 'rb')
         #audio_bytes = audio_file.read()
         #st.audio(audio_bytes, format='wav')
-        autoplay_audio("hello.mp3")
+        if st.session_state.language == 'English':
+          autoplay_audio("hello.mp3")
+        else:
+          autoplay_audio("hello2.mp3")
 
     my_bar.empty()
     if st.session_state.language == 'English':
@@ -838,7 +834,7 @@ def compute_page(st, **state):
 
     elif st.session_state.language == '中文':
         st.subheader('摘要与评论', divider='rainbow')
-        summary = summary.replace('<|endoftext|>', '')
+        summary = after.replace('<|endoftext|>', '')
         st.markdown(summary)
 
         st.subheader('科技新闻', divider='rainbow')
