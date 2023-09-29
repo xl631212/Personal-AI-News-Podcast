@@ -698,9 +698,8 @@ def compute_page(st, **state):
     
     my_bar.progress(90, text="Generating Podcast...")
     if st.session_state.language == 'English':
-        print("脚本是这个",response)
         updated = response.replace('-', '').replace('--', '').replace('"', '').replace('“', '')
-        command = f'edge-tts --voice en-US-AriaNeural --text "{updated}" --write-media hello.mp3'
+        command = f'edge-tts --text "{updated}" --write-media hello.mp3'
         subprocess.run(command, shell=True)
         my_bar.progress(90, text="Generating Summary...")
 
