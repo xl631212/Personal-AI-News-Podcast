@@ -563,7 +563,7 @@ def input_page(st, **state):
             .footer {
                 position: fixed;
                 bottom: 0;
-                right: 0;
+                left: 10px;
                 width: auto;
                 background-color: transparent;
                 text-align: right;
