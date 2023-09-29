@@ -684,8 +684,8 @@ def compute_page(st, **state):
 
     my_bar.progress(80, text="Writing Newsletter...")
     print(google_news['summary'], bair_blog, mit_blog, openai_blog, ariv_essay)
-    query = str(google_news['summary'])  + bair_blog  + str(mit_blog)  + str(h_content)\
-              + openai_blog + 'new arxiv essay' + ariv_essay
+    query = str(google_news['summary']) + str(mit_blog)  + str(h_content)\
+              + openai_blog
     
     query = query.replace('<|endoftext|>', '')
     messages =  [
