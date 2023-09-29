@@ -1,7 +1,7 @@
 requests
 beautifulsoup4
 streamlit
-gnews
+gnews==0.3.1
 openai
 playwright
 tiktoken
