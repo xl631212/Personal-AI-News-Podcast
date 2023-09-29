@@ -750,6 +750,13 @@ def compute_page(st, **state):
         command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello.mp3'
         # 使用 subprocess 运行命令
         subprocess.run(command, shell=True)
+        query = response
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{query}】"},]
+        summary = get_completion_from_messages(messages)
 
 
     my_bar.progress(100, text="Almost there...")
@@ -832,12 +839,6 @@ def compute_page(st, **state):
     elif st.session_state.language == '中文':
         st.subheader('摘要与评论', divider='rainbow')
         summary = summary.replace('<|endoftext|>', '')
-        messages =  [
-                        {'role':'system',
-                        'content': system_message_3},
-                        {'role':'user',
-                        'content': f"{summary}"},]
-        summary = get_completion_from_messages(messages)
         st.markdown(summary)
 
         st.subheader('科技新闻', divider='rainbow')
