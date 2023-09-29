@@ -629,18 +629,6 @@ def compute_page(st, **state):
     bair_blog = summarize_website_content(Microsoft_link)
 
 
-    my_bar.progress(15, text="Searching for Machine Learning Street Talk...")
-    channel_id = "UCMLtBahI5DMrt0NPvDSoIRQ"
-    playlist = Playlist(playlist_from_channel_id(channel_id))
-    while playlist.hasMoreVideos:
-        print('Getting more videos...')
-        playlist.getNextVideos()
-        print(f'Videos Retrieved: {len(playlist.videos)}')
-    
-    a16z_title, a16z_link = playlist.videos[0]['title'], playlist.videos[0]['link']
-    a16z_blog = summarize_website_content(a16z_link)
-
-
     my_bar.progress(20, text="Searching for Amazon Blog...")
     A_title, A_link = get_latest_aws_ml_blog()
     mit_blog = summarize_website_content(A_link)
@@ -707,8 +695,7 @@ def compute_page(st, **state):
                     {'role':'user',
                     'content': f"【{query}】"},]
     response = get_completion_from_messages(messages)
-    command = f'edge-tts --text "{response}" --write-media hello.mp3'
-    subprocess.run(command, shell=True)
+    
     my_bar.progress(90, text="Generating Podcast...")
     if st.session_state.language == 'English':
         command = f'edge-tts --text "{response}" --write-media hello.mp3'
@@ -779,12 +766,6 @@ def compute_page(st, **state):
             font-size: 20px;font-weight: bold;">{Nvidia_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Nvidia</span>', unsafe_allow_html=True)
         st.markdown(n_content)
-
-        a16z_link_html = f'<a href="{a16z_link}" style="color: #2859C0; text-decoration: none; font-size: 20px; font-weight: bold;">{a16z_title}</a>'
-        mlst_html = '<span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Machine Learning Street Talk</span>'
-        full_html = a16z_link_html + mlst_html
-        st.markdown(full_html, unsafe_allow_html=True)
-        st.markdown(a16z_blog)
       
         st.subheader('Technology Blogs', divider='green')
         st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
@@ -846,28 +827,6 @@ def compute_page(st, **state):
                 font-size: 20px;font-weight: bold;"> {title} </a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
             st.markdown(news_summary)
-
-
-        st.subheader('播客与演讲', divider='orange')
-        lexi_boardcast = lexi_boardcast.replace('<|endoftext|>', '')
-        messages =  [
-                        {'role':'system',
-                        'content': system_message_3},
-                        {'role':'user',
-                        'content': f"【{lexi_boardcast}】"},]
-        lexi_boardcast = get_completion_from_messages(messages)
-
-        messages =  [
-                        {'role':'system',
-                        'content': system_message_3},
-                        {'role':'user',
-                        'content': f"{a16z_title}"},]
-        L_title = get_completion_from_messages(messages)
-
-        st.markdown(f'<a href="https://www.youtube.com/@lexfridman/videos" style="color:  #2859C0; text-decoration: none; \
-            font-size: 20px;font-weight: bold;">{L_title}</a>\
-                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lexi Fridman</span>', unsafe_allow_html=True)
-        st.markdown(lexi_boardcast)
         
         
         st.subheader('科技博客', divider='green')
