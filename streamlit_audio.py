@@ -22,11 +22,11 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain.chat_models import ChatOpenAI
 from langchain.agents import initialize_agent, Tool
 from langchain.agents import AgentType
+from hackernews import HackerNews
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
 from langchain.schema import Document
-
 
 os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
 os.environ["OPENAI_API_KEY"]= st.secrets["OPENAI_API_KEY"]
@@ -47,48 +47,6 @@ system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
 
-
-def find_next_link_text(url, target_link, target_text):
-    """
-    Find the first link and text after the given target link and text on the specified URL.
-    
-    Parameters:
-        url (str): The URL of the webpage to scrape.
-        target_link (str): The specific link to be found.
-        target_text (str): The specific link text to be found.
-        
-    Returns:
-        tuple: A tuple containing the next link and its text. Returns (None, None) if not found.
-    """
-    
-    # Send a GET request
-    response = requests.get(url)
-    response.raise_for_status()  # This will raise an exception if there's an error
-    
-    # Parse the content using BeautifulSoup
-    soup = BeautifulSoup(response.content, 'html.parser')
-    
-    # Find all the <ul> elements
-    ul_elems = soup.find_all('ul')
-    
-    # Initialize a list to store all links and their texts
-    all_links = []
-    
-    # Extract links and texts from all <ul> elements
-    for ul_elem in ul_elems:
-        links = [(link.get('href'), link.text) for link in ul_elem.find_all('a')]
-        all_links.extend(links)
-    
-    # Extract the first link and text after the specified link-text pair
-    found = False
-    for link, text in all_links:
-        if found:
-            return link, text
-        if link == target_link and text == target_text:
-            found = True
-            
-    return None, None
-  
 def is_link_accessible(url):
     """Check if a link is accessible."""
     try:
@@ -229,7 +187,7 @@ def summarize_documents(split_docs):
 
 def get_completion_from_messages(messages,
                                  model="gpt-3.5-turbo-16k",
-                                 temperature=0.5, max_tokens=7000):
+                                 temperature=0.5, max_tokens=8000):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
@@ -238,7 +196,7 @@ def get_completion_from_messages(messages,
     )
     return response.choices[0].message["content"]
 
-def fetch_gnews_links(query, language='en', country='US', period='2d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
+def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
     """
     Fetch news links from Google News based on the provided query.
 
@@ -284,7 +242,7 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     Returns:
     - The summarized content.
     """
-    if True:
+    if is_link_accessible(url):
         # Load the content from the given URL
         loader = WebBaseLoader(url)
         docs = loader.load()
@@ -390,6 +348,17 @@ def contains_keywords(s):
     keywords = ["AI", "GPT", "LLM"]
     return any(keyword in s for keyword in keywords)
 
+
+def heacker_news_content():
+    hn = HackerNews()
+    content = {'title':[], 'summary':[], 'url':[]}
+    for news in hn.top_stories()[:25]:
+        if contains_keywords(hn.item(news).title):
+            if 'url' in dir(hn.item(news)):
+                content['title'].append(hn.item(news).title)
+                content['url'].append(hn.item(news).url)
+                content['summary'].append(summarize_website_content(hn.item(news).url))
+    return content
 
 
 def input_page(st, **state):
@@ -912,7 +881,6 @@ def compute_page(st, **state):
     """, unsafe_allow_html=True)
 
 
-
 def page_one():
     input_page(st)
 
@@ -951,4 +919,3 @@ def main():
 if __name__ == "__main__":
     st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
     main()
-
