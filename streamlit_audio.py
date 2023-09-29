@@ -1,5 +1,3 @@
-import openai
-import streamlit as st
 import os
 import pprint
 import requests
@@ -10,6 +8,8 @@ import edge_tts
 import arxiv
 import subprocess
 import base64
+import openai
+import streamlit as st
 from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.llms.openai import OpenAI
@@ -25,27 +25,13 @@ from langchain.agents import AgentType
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
-from langchain.schema import Document
+
 
 
 os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
 os.environ["OPENAI_API_KEY"]= st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
-
-system_message = '''
-                You are a very talented news editor, skilled at consolidating 
-                fragmented information and introductions into a cohesive news script, without missing any details.
-                Compile the news article based on the information in 【】.  
-                '''
-
-system_message_2 = '''
-                You are a linguist, skilled in summarizing textual content and presenting it in 3 bullet points using markdown. 
-                '''
-
-system_message_3 = '''
-                你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
-                '''
 
 system_message = '''
                 You are a very talented editor, skilled at consolidating 
@@ -566,7 +552,7 @@ def input_page(st, **state):
             .footer {
                 position: fixed;
                 bottom: 0;
-                right: 0;
+                left: 10px;
                 width: auto;
                 background-color: transparent;
                 text-align: right;
@@ -577,17 +563,48 @@ def input_page(st, **state):
         <div class="footer">Made with ❤️ by Xuying Li</div>
     """, unsafe_allow_html=True)
         
-
-
+        
+      
 def compute_page(st, **state):
+    # Include Font Awesome CSS
+    st.markdown(
+        """
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Style and position the GitHub and Twitter icons at the bottom left corner
+    st.markdown(
+        """
+        <style>
+            .social-icons {
+                gap: 10px;  # Space between icons
+            }
+            .social-icons a i {
+                color: #6c6c6c;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # Add the GitHub and Twitter icons with hyperlinks
+    github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
+    twitter_url = "https://twitter.com/xuying_lee"  # replace with your Twitter profile URL
+
     st.markdown("""
-    <h1 style='text-align: center; color: #333333;'>
-        Your Personal <span style='color: #FB5858; font-size: 1.30em;'>AI News</span> Podcast
+    <h1 style='text-align: center; color: black;'>
+        Your Personal <span style='color: #FF4B4B; font-size: 1.25em;'>AI News</span> Podcast
     </h1>
+    <div class="social-icons" style='text-align: center; color: black;'>
+            <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
+            <a href="https://twitter.com/xuying_lee" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+        </div>
     """, 
     unsafe_allow_html=True
     )
-    
+   
     st.markdown("""
     <style>
         /* This styles the main content excluding h1 and h2 */
@@ -679,7 +696,7 @@ def compute_page(st, **state):
     n_content = summarize_website_content(next_link)
 
     my_bar.progress(80, text="Writing Newsletter...")
- 
+    print(google_news['summary'], bair_blog, mit_blog, openai_blog, ariv_essay)
     query = str(google_news['summary'])  + bair_blog  + str(mit_blog)  + str(h_content)\
               + openai_blog + 'new arxiv essay' + ariv_essay
     
@@ -690,8 +707,49 @@ def compute_page(st, **state):
                     {'role':'user',
                     'content': f"【{query}】"},]
     response = get_completion_from_messages(messages)
-
+    command = f'edge-tts --text "{response}" --write-media hello.mp3'
+    subprocess.run(command, shell=True)
     my_bar.progress(90, text="Generating Podcast...")
+    if st.session_state.language == 'English':
+
+        my_bar.progress(90, text="Generating Summary...")
+
+        query = response
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_2},
+                        {'role':'user',
+                        'content': f"【{query}】"},]
+        summary = get_completion_from_messages(messages)
+    
+    else:
+        before = response
+        before = before.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{before}】"},]
+        after = get_completion_from_messages(messages)
+        # 构建 edge-tts 命令
+        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello2.mp3'
+        # 使用 subprocess 运行命令
+        subprocess.run(command, shell=True)
+
+
+    my_bar.progress(100, text="Almost there...")
+
+    with radio_placeholder:
+        #audio_file = open('hello.mp3', 'rb')
+        #audio_bytes = audio_file.read()
+        #st.audio(audio_bytes, format='wav')
+        if st.session_state.language == 'English':
+          autoplay_audio("hello.mp3")
+        else:
+          autoplay_audio("hello2.mp3")
+        
+
+    my_bar.empty()
     if st.session_state.language == 'English':
         st.subheader('Summary and Commentary', divider='rainbow')
         st.markdown(summary)
@@ -762,13 +820,7 @@ def compute_page(st, **state):
 
     elif st.session_state.language == '中文':
         st.subheader('摘要与评论', divider='rainbow')
-        summary = summary.replace('<|endoftext|>', '')
-        messages =  [
-                        {'role':'system',
-                        'content': system_message_3},
-                        {'role':'user',
-                        'content': f"{summary}"},]
-        summary = get_completion_from_messages(messages)
+        summary = after.replace('<|endoftext|>', '')
         st.markdown(summary)
 
         st.subheader('科技新闻', divider='rainbow')
@@ -808,7 +860,7 @@ def compute_page(st, **state):
                         {'role':'system',
                         'content': system_message_3},
                         {'role':'user',
-                        'content': f"{L_title}"},]
+                        'content': f"{a16z_title}"},]
         L_title = get_completion_from_messages(messages)
 
         st.markdown(f'<a href="https://www.youtube.com/@lexfridman/videos" style="color:  #2859C0; text-decoration: none; \
@@ -825,6 +877,7 @@ def compute_page(st, **state):
                         {'role':'user',
                         'content': f"{openai_blog}"},]
         openai_blog = get_completion_from_messages(messages)
+
 
         messages =  [
                         {'role':'system',
@@ -901,21 +954,20 @@ def compute_page(st, **state):
                 ', unsafe_allow_html=True)
             st.markdown(result_summary)
     st.markdown("""
-        <style>
-            .footer {
-                position: fixed;
-                bottom: 0;
-                right: 0;
-                width: auto;
-                background-color: transparent;
-                text-align: right;
-                padding-right: 10px;
-                padding-bottom: 10px;
-            }
-        </style>
-        <div class="footer">Made with ❤️ by Xuying Li</div>
-    """, unsafe_allow_html=True)
-
+    <style>
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 10px;
+            width: auto;
+            background-color: transparent;
+            text-align: left;
+            padding-left: 10px;
+            padding-top: 10px;
+        }
+    </style>
+    <div class="footer">Made with ❤️ by Xuying Li</div>
+""", unsafe_allow_html=True)
 
 def page_one():
     input_page(st)
@@ -933,7 +985,7 @@ def main():
         st.session_state.choice = ""
     
     if "language" not in st.session_state:
-        st.session_state.language = ""
+        st.session_state.language = "English"
 
     if "audio_length" not in st.session_state:
         st.session_state.audio_length = '5'
@@ -955,3 +1007,6 @@ def main():
 if __name__ == "__main__":
     st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
     main()
+
+
+
