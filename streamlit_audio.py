@@ -622,7 +622,6 @@ def compute_page(st, **state):
     data_mrf_link, h_title = extract_data_from_url(url, class_name)
     h_content = summarize_website_content(data_mrf_link)
 
-
     my_bar.progress(75, text="Nvidia Podcast...")
     n_content = summarize_website_content('https://blogs.nvidia.com/ai-podcast/')
 
@@ -701,7 +700,7 @@ def compute_page(st, **state):
 
         st.subheader('Podcast and Speeches', divider='orange')
 
-        st.markdown(f'<a href="https://lexfridman.com/podcast/" style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href="{youtube_link}" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;">{L_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lex Fridman</span>', unsafe_allow_html=True)
         st.markdown(lexi_boardcast)
@@ -728,7 +727,7 @@ def compute_page(st, **state):
                 <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Microsoft</span>', unsafe_allow_html=True)
         st.markdown(bair_blog)
         
-        st.markdown(f'<a href="{A_link}" style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href="https://aws.amazon.com/blogs/machine-learning/" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {A_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Amazon</span>', unsafe_allow_html=True)
         st.markdown(mit_blog)
