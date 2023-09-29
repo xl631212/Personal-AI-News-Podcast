@@ -633,18 +633,6 @@ def compute_page(st, **state):
     A_title, A_link = get_latest_aws_ml_blog()
     mit_blog = summarize_website_content(A_link)
 
-    my_bar.progress(30, text="Searching for Apple Blog...")
-    url = 'https://machinelearning.apple.com/'
-    
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    
-    # 根据提供的HTML片段，定位到文章的标题和链接
-    article = soup.select_one('h3.post-title a')
-    apple_link = 'https://machinelearning.apple.com'+ article['href']
-    
-    Apple_blog_title = article.text
-    Apple_blog = summarize_website_content(apple_link)
 
     my_bar.progress(40, text='Searching for lexi friman boardcast...')
     url = "https://lexfridman.com/podcast/"
@@ -783,12 +771,6 @@ def compute_page(st, **state):
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Amazon</span>', unsafe_allow_html=True)
         st.markdown(mit_blog)
 
-        st.markdown(
-            f'<a href={apple_link} style="color:  #2859C0; text-decoration: none; font-size: 20px; font-weight: bold;">{Apple_blog_title}</a>\
-            <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Apple</span>', 
-            unsafe_allow_html=True
-        )
-        st.markdown(Apple_blog)
 
 
         st.subheader('Cutting-edge Papers', divider='green')
