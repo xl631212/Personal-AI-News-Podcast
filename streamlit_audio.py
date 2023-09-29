@@ -679,7 +679,8 @@ def compute_page(st, **state):
                     'content': f"【{query}】"},]
     response = get_completion_from_messages(messages)
 
-    my_bar.progress(90, text="Generating Podcast...")
+     my_bar.progress(90, text="Generating Podcast...")
+
     if st.session_state.language == 'English':
         updated_text = response
         # 构建 edge-tts 命令
