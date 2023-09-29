@@ -26,12 +26,9 @@ from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
 
-
-
 os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
 os.environ["OPENAI_API_KEY"]= st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
-
 
 system_message = '''
                 You are a very talented editor, skilled at consolidating 
@@ -646,7 +643,18 @@ def compute_page(st, **state):
     Apple_blog_title = article.text
     Apple_blog = summarize_website_content(apple_link)
 
-    my_bar.progress(40, text='Searching for lexi friman boardcast...')
+    my_bar.progress(35, text='Searching for machine learning street talk...')
+    channel_id = "UCMLtBahI5DMrt0NPvDSoIRQ"
+    playlist = Playlist(playlist_from_channel_id(channel_id))
+
+    while playlist.hasMoreVideos:
+        playlist.getNextVideos()
+
+    machine_title = playlist.videos[0]['title']
+    machine_link = playlist.videos[0]['link']
+    machine_learning_boardcast = summarize_website_content(machine_link)
+
+    my_bar.progress(40, text='Searching for lex friman boardcast...')
     url = "https://lexfridman.com/podcast/"
     link = get_transcript_link(url)
     L_title = get_h1_text(link)
@@ -682,6 +690,7 @@ def compute_page(st, **state):
     target_text = "AI Podcast"
     next_link, Nvidia_title = find_next_link_text(url, target_link, target_text)
     n_content = summarize_website_content(next_link)
+
 
     my_bar.progress(80, text="Writing Newsletter...")
     print(google_news['summary'], bair_blog, mit_blog, openai_blog, ariv_essay)
@@ -767,6 +776,11 @@ def compute_page(st, **state):
             font-size: 20px;font-weight: bold;">{Nvidia_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Nvidia</span>', unsafe_allow_html=True)
         st.markdown(n_content)
+
+        st.markdown(f'<a href="{machine_link}" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{machine_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Machine Learning Street Talk</span>', unsafe_allow_html=True)
+        st.markdown(machine_learning_boardcast)
       
         st.subheader('Technology Blogs', divider='green')
         st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
@@ -805,7 +819,6 @@ def compute_page(st, **state):
         st.subheader('摘要与评论', divider='rainbow')
         summary = after.replace('<|endoftext|>', '')
         st.markdown(summary)
-
         st.subheader('科技新闻', divider='rainbow')
         for i in range(len(google_news['title'])):
             title = google_news['title'][i]
@@ -828,8 +841,84 @@ def compute_page(st, **state):
                 font-size: 20px;font-weight: bold;"> {title} </a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
             st.markdown(news_summary)
+        news_summary = h_title
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{news_summary}】"},]
+        h_title = get_completion_from_messages(messages)
+        st.markdown(f'<a href="{data_mrf_link}" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{h_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Techcrunch</span>', unsafe_allow_html=True)
+        news_summary = h_content
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{news_summary}】"},]
+        h_content = get_completion_from_messages(messages)
+        st.markdown(h_content)
+
+        st.subheader('播客与博客', divider='orange')
+        news_summary = L_title
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{news_summary}】"},]
+        L_title = get_completion_from_messages(messages)
+        st.markdown(f'<a href="{youtube_link}" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{L_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lex Fridman</span>', unsafe_allow_html=True)
+        news_summary = lexi_boardcast
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{news_summary}】"},]
+        lexi_boardcast = get_completion_from_messages(messages)
+        st.markdown(lexi_boardcast)
+
+        news_summary = Nvidia_title
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{news_summary}】"},]
+        Nvidia_title = get_completion_from_messages(messages)
+        st.markdown(f'<a href="{next_link}" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{Nvidia_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Nvidia</span>', unsafe_allow_html=True)
+        news_summary = n_content
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{news_summary}】"},]
+        n_content = get_completion_from_messages(messages)
+        st.markdown(n_content)
+
+        news_summary = machine_title
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{news_summary}】"},]
+        machine_title = get_completion_from_messages(messages)
+        st.markdown(f'<a href="{machine_link}" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{machine_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Machine Learning Street Talk</span>', unsafe_allow_html=True)
         
-        
+        news_summary = machine_learning_boardcast
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{news_summary}】"},]
+        machine_learning_boardcast = get_completion_from_messages(messages)
+        st.markdown(machine_learning_boardcast)
+
         st.subheader('科技博客', divider='green')
         openai_blog = openai_blog.replace('<|endoftext|>', '')
         messages =  [
