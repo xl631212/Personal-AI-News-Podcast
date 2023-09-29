@@ -434,8 +434,8 @@ def input_page(st, **state):
         Your Personal <span style='color: #FF4B4B; font-size: 1.25em;'>AI News</span> Podcast
     </h1>
     <div class="social-icons" style='text-align: center; color: black;'>
-            <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
-            <a href="https://twitter.com/xuying_lee" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+            <a href="{github_url}" target="_blank"><i class="fab fa-github fa-2x"></i></a>
+            <a href="{twitter_url}" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
         </div>
     """, 
     unsafe_allow_html=True
@@ -462,7 +462,7 @@ def input_page(st, **state):
         with col4a:
             col1a, col2a, col8a = st.columns([3,1,3])
             with col1a:
-                st.write("**Options🔘:**")
+                st.write("**Options:**")
         with col5a:
             pass
 
@@ -505,6 +505,7 @@ def input_page(st, **state):
         with col3:
             pass
         with col4:
+
             col1, col2, col8 = st.columns([4,2,4])
             with col1:
                 language = st.selectbox(
@@ -512,17 +513,33 @@ def input_page(st, **state):
                     ("English", "中文"),
                     key='ahaha'
                 )
-                audio_length = st.slider('Audio length (minutes)', 2, 6, value=4)
+                audio_length_adjust = st.select_slider('Audio length', options=['small', 'meduim', 'long'],value=('meduim'))
+                if audio_length_adjust == 'small':
+                    audio_length = 200
+                elif audio_length_adjust == 'meduim':
+                    audio_length = 350
+                else:
+                    audio_length = 500
                 st.session_state.audio_length = audio_length
 
             
             with col8:
                 options_2 = st.selectbox(
                     'In a tone of',
-                    ['Professional', 'Enthusiastic', 'Humor'],
+                    ['Informal', 'Professional', 'Humorous'],
                     key='opt3'
                 )
-                st.session_state.day = st.slider('In a period of (days)', 1, 3, value=1)
+                day = st.select_slider('Information volume', options=['small', 'meduim', 'large'],value=('meduim'))
+                if day == 'small':
+                    st.session_state.day = 2
+                    st.session_state.arxiv = 2
+                elif day == 'meduim':
+                    st.session_state.day = 4
+                    st.session_state.arxiv = 3
+                else:
+                    st.session_state.day = 6
+                    st.session_state.arxiv = 4
+
         with col5:
             pass
 
@@ -532,7 +549,13 @@ def input_page(st, **state):
         if st.button("👆 Double-Click Generation"):
             st.session_state.page = "two"
             st.session_state.language = language
-            st.session_state.tone = options_2
+            if options_2 == 'Informal':
+                st.session_state.tone = """read news and present them in a casual and conversational tone. 
+                You should use everyday language, contractions, and slang to engage the audience and make the news more relatable. """
+            elif options_2 == 'Humorous':
+                st.session_state.tone = """read news and present in a comical and amusing tone. 
+                You should be able to recognize and exaggerate humorous elements of each article along with jokes and deliver them in a way 
+                that will make the audience laugh."""
 
 
     st.markdown("""
@@ -540,7 +563,7 @@ def input_page(st, **state):
             .footer {
                 position: fixed;
                 bottom: 0;
-                left: 10px;
+                right: 0;
                 width: auto;
                 background-color: transparent;
                 text-align: right;
@@ -550,6 +573,7 @@ def input_page(st, **state):
         </style>
         <div class="footer">Made with ❤️ by Xuying Li</div>
     """, unsafe_allow_html=True)
+        
         
       
 def compute_page(st, **state):
@@ -656,7 +680,7 @@ def compute_page(st, **state):
     my_bar.progress(50, text="Searching for arxiv ...")
     search = arxiv.Search(
         query = "AI, LLM, machine learning, NLP",
-        max_results = 3,
+        max_results = st.session_state.arxiv,
         sort_by = arxiv.SortCriterion.SubmittedDate
     )
     ariv_essay = ''
@@ -664,7 +688,7 @@ def compute_page(st, **state):
         ariv_essay += result.summary
     
     my_bar.progress(60, text="Searching Google News...")
-    google_news = fetch_gnews_links(query='AI, LLM, Machine learning',  period=st.session_state.day)
+    google_news = fetch_gnews_links(query='AI, LLM, Machine learning', max_results = st.session_state.day)
 
     my_bar.progress(70, text="Searching Techcrunch...")
     url = 'https://techcrunch.com/category/artificial-intelligence/'
@@ -690,8 +714,7 @@ def compute_page(st, **state):
     query = query.replace('<|endoftext|>', '')
     messages =  [
                     {'role':'system',
-                    'content': system_message+ "keep the length of the script within {} words.".format(st.session_state.audio_length * 60)\
-                        + "make the script in {} way".format(st.session_state.tone)},
+                    'content': system_message + "keep it equal to {} words.".format(st.session_state.audio_length) + st.session_state.tone},
                     {'role':'user',
                     'content': f"【{query}】"},]
     response = get_completion_from_messages(messages)
@@ -716,12 +739,12 @@ def compute_page(st, **state):
     
     else:
         before = response
-        summary = before.replace('<|endoftext|>', '')
+        before = before.replace('<|endoftext|>', '')
         messages =  [
                         {'role':'system',
                         'content': system_message_3},
                         {'role':'user',
-                        'content': f"【{summary}】"},]
+                        'content': f"【{before}】"},]
         after = get_completion_from_messages(messages)
         # 构建 edge-tts 命令
         command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello.mp3'
@@ -983,12 +1006,13 @@ def main():
 
     if "audio_length" not in st.session_state:
         st.session_state.audio_length = '5'
-      
-    if "tone" not in st.session_state:
-        st.session_state.tone = ' '
-      
+
     if "day" not in st.session_state:
-        st.session_state.day = ' '
+        st.session_state.day = 0
+        st.session_state.arxiv = 0
+    
+    if "tone" not in st.session_state:
+        st.session_state.tone = ''
 
 
     # 根据session状态来渲染页面
