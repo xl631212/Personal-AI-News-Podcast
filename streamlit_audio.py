@@ -46,6 +46,47 @@ system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
 
+def find_next_link_text(url, target_link, target_text):
+    """
+    Find the first link and text after the given target link and text on the specified URL.
+    
+    Parameters:
+        url (str): The URL of the webpage to scrape.
+        target_link (str): The specific link to be found.
+        target_text (str): The specific link text to be found.
+        
+    Returns:
+        tuple: A tuple containing the next link and its text. Returns (None, None) if not found.
+    """
+    
+    # Send a GET request
+    response = requests.get(url)
+    response.raise_for_status()  # This will raise an exception if there's an error
+    
+    # Parse the content using BeautifulSoup
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    # Find all the <ul> elements
+    ul_elems = soup.find_all('ul')
+    
+    # Initialize a list to store all links and their texts
+    all_links = []
+    
+    # Extract links and texts from all <ul> elements
+    for ul_elem in ul_elems:
+        links = [(link.get('href'), link.text) for link in ul_elem.find_all('a')]
+        all_links.extend(links)
+    
+    # Extract the first link and text after the specified link-text pair
+    found = False
+    for link, text in all_links:
+        if found:
+            return link, text
+        if link == target_link and text == target_text:
+            found = True
+            
+    return None, None
+  
 def is_link_accessible(url):
     """Check if a link is accessible."""
     try:
