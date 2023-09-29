@@ -47,6 +47,48 @@ system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
 
+
+def find_next_link_text(url, target_link, target_text):
+    """
+    Find the first link and text after the given target link and text on the specified URL.
+    
+    Parameters:
+        url (str): The URL of the webpage to scrape.
+        target_link (str): The specific link to be found.
+        target_text (str): The specific link text to be found.
+        
+    Returns:
+        tuple: A tuple containing the next link and its text. Returns (None, None) if not found.
+    """
+    
+    # Send a GET request
+    response = requests.get(url)
+    response.raise_for_status()  # This will raise an exception if there's an error
+    
+    # Parse the content using BeautifulSoup
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    # Find all the <ul> elements
+    ul_elems = soup.find_all('ul')
+    
+    # Initialize a list to store all links and their texts
+    all_links = []
+    
+    # Extract links and texts from all <ul> elements
+    for ul_elem in ul_elems:
+        links = [(link.get('href'), link.text) for link in ul_elem.find_all('a')]
+        all_links.extend(links)
+    
+    # Extract the first link and text after the specified link-text pair
+    found = False
+    for link, text in all_links:
+        if found:
+            return link, text
+        if link == target_link and text == target_text:
+            found = True
+            
+    return None, None
+  
 def is_link_accessible(url):
     """Check if a link is accessible."""
     try:
@@ -187,7 +229,7 @@ def summarize_documents(split_docs):
 
 def get_completion_from_messages(messages,
                                  model="gpt-3.5-turbo-16k",
-                                 temperature=0.5, max_tokens=8000):
+                                 temperature=0.5, max_tokens=7000):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
@@ -196,7 +238,7 @@ def get_completion_from_messages(messages,
     )
     return response.choices[0].message["content"]
 
-def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
+def fetch_gnews_links(query, language='en', country='US', period='2d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
     """
     Fetch news links from Google News based on the provided query.
 
@@ -242,7 +284,7 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     Returns:
     - The summarized content.
     """
-    if is_link_accessible(url):
+    if True:
         # Load the content from the given URL
         loader = WebBaseLoader(url)
         docs = loader.load()
@@ -348,17 +390,6 @@ def contains_keywords(s):
     keywords = ["AI", "GPT", "LLM"]
     return any(keyword in s for keyword in keywords)
 
-
-def heacker_news_content():
-    hn = HackerNews()
-    content = {'title':[], 'summary':[], 'url':[]}
-    for news in hn.top_stories()[:25]:
-        if contains_keywords(hn.item(news).title):
-            if 'url' in dir(hn.item(news)):
-                content['title'].append(hn.item(news).title)
-                content['url'].append(hn.item(news).url)
-                content['summary'].append(summarize_website_content(hn.item(news).url))
-    return content
 
 
 def input_page(st, **state):
@@ -565,22 +596,46 @@ def compute_page(st, **state):
 
     my_bar.progress(10, text="Searching for Microsoft Blog...")
     url = "https://blogs.microsoft.com/"
-    M_title, link = extract_blog_link_info(url)
-    bair_blog = summarize_website_content(link)
+    M_title, Microsoft_link = extract_blog_link_info(url)
+    bair_blog = summarize_website_content(Microsoft_link)
+
+
+    my_bar.progress(15, text="Searching for Machine Learning Street Talk...")
+    channel_id = "UCMLtBahI5DMrt0NPvDSoIRQ"
+    playlist = Playlist(playlist_from_channel_id(channel_id))
+    while playlist.hasMoreVideos:
+        print('Getting more videos...')
+        playlist.getNextVideos()
+        print(f'Videos Retrieved: {len(playlist.videos)}')
+    
+    a16z_title, a16z_link = playlist.videos[0]['title'], playlist.videos[0]['link']
+    a16z_blog = summarize_website_content(a16z_link)
+
 
     my_bar.progress(20, text="Searching for Amazon Blog...")
     A_title, A_link = get_latest_aws_ml_blog()
     mit_blog = summarize_website_content(A_link)
 
     my_bar.progress(30, text="Searching for Apple Blog...")
-    Apple_blog = summarize_website_content('https://machinelearning.apple.com/')
+    url = 'https://machinelearning.apple.com/'
     
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    # 根据提供的HTML片段，定位到文章的标题和链接
+    article = soup.select_one('h3.post-title a')
+    apple_link = 'https://machinelearning.apple.com'+ article['href']
+    
+    Apple_blog_title = article.text
+    Apple_blog = summarize_website_content(apple_link)
+
     my_bar.progress(40, text='Searching for lexi friman boardcast...')
     url = "https://lexfridman.com/podcast/"
     link = get_transcript_link(url)
     L_title = get_h1_text(link)
     youtube_link = get_youtube_link(url)
     lexi_boardcast = summarize_website_content(youtube_link)
+    
 
     my_bar.progress(50, text="Searching for arxiv ...")
     search = arxiv.Search(
@@ -596,14 +651,20 @@ def compute_page(st, **state):
     google_news = fetch_gnews_links(query='AI, LLM, Machine learning', max_results = st.session_state.day)
 
     my_bar.progress(70, text="Searching Techcrunch...")
-    url = "https://techcrunch.com/"
-    class_name = 'post-block__title__link'
-    data_mrf_link, h_title = extract_data_from_url(url, class_name)
+    url = 'https://techcrunch.com/category/artificial-intelligence/'
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    articles = soup.select('.post-block__title a')
+
+    data_mrf_link, h_title = articles[0]['href'],articles[0].text
     h_content = summarize_website_content(data_mrf_link)
 
-
     my_bar.progress(75, text="Nvidia Podcast...")
-    n_content = summarize_website_content('https://blogs.nvidia.com/ai-podcast/')
+    url = "https://blogs.nvidia.com/ai-podcast/"
+    target_link = "https://blogs.nvidia.com/ai-podcast/"
+    target_text = "AI Podcast"
+    next_link, Nvidia_title = find_next_link_text(url, target_link, target_text)
+    n_content = summarize_website_content(next_link)
 
     my_bar.progress(80, text="Writing Newsletter...")
  
@@ -668,47 +729,53 @@ def compute_page(st, **state):
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            if 'No result' not in google_news['summary'][i]:
+            if len(google_news['summary'][i]) > 100:
                 st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
                 font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
                 st.markdown(google_news['summary'][i])
         
-        st.markdown(f'<a href="https://techcrunch.com/" style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href="{data_mrf_link}" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;">{h_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Techcrunch</span>', unsafe_allow_html=True)
         st.markdown(h_content)
 
         st.subheader('Podcast and Speeches', divider='orange')
 
-        st.markdown(f'<a href="https://lexfridman.com/podcast/" style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href="{youtube_link}" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;">{L_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lex Fridman</span>', unsafe_allow_html=True)
         st.markdown(lexi_boardcast)
 
-        st.markdown(f'<a href="https://blogs.nvidia.com/ai-podcast/" style="color:  #2859C0; text-decoration: none; \
-            font-size: 20px;font-weight: bold;">The AI Podcast</a>\
+        st.markdown(f'<a href="{next_link}" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{Nvidia_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Nvidia</span>', unsafe_allow_html=True)
         st.markdown(n_content)
-        
+
+        a16z_link_html = f'<a href="{a16z_link}" style="color: #2859C0; text-decoration: none; font-size: 20px; font-weight: bold;">{a16z_title}</a>'
+        mlst_html = '<span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Machine Learning Street Talk</span>'
+        full_html = a16z_link_html + mlst_html
+        st.markdown(full_html, unsafe_allow_html=True)
+        st.markdown(a16z_blog)
+      
         st.subheader('Technology Blogs', divider='green')
         st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {openai_title}</a>\
                 <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Openai</span>', unsafe_allow_html=True)
         st.markdown(openai_blog)  
 
-        st.markdown(f'<a href={link} style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href={Microsoft_link} style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {M_title}</a>\
                 <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Microsoft</span>', unsafe_allow_html=True)
         st.markdown(bair_blog)
         
-        st.markdown(f'<a href="{A_link}" style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href="https://aws.amazon.com/blogs/machine-learning/" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {A_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Amazon</span>', unsafe_allow_html=True)
         st.markdown(mit_blog)
 
         st.markdown(
-            f'<a href="https://machinelearning.apple.com/" style="color:  #2859C0; text-decoration: none; font-size: 20px; font-weight: bold;">Recent research</a>\
+            f'<a href={apple_link} style="color:  #2859C0; text-decoration: none; font-size: 20px; font-weight: bold;">{Apple_blog_title}</a>\
             <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Apple</span>', 
             unsafe_allow_html=True
         )
@@ -725,16 +792,7 @@ def compute_page(st, **state):
             
 
     elif st.session_state.language == '中文':
-        st.subheader('摘要与评论', divider='rainbow')
-        summary = summary.replace('<|endoftext|>', '')
-        messages =  [
-                        {'role':'system',
-                        'content': system_message_3},
-                        {'role':'user',
-                        'content': f"{summary}"},]
-        summary = get_completion_from_messages(messages)
-        st.markdown(summary)
-
+        
         st.subheader('科技新闻', divider='rainbow')
         for i in range(len(google_news['title'])):
             title = google_news['title'][i]
