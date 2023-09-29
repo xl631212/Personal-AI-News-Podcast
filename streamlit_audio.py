@@ -499,10 +499,10 @@ def input_page(st, **state):
                     ("English", "中文"),
                     key='ahaha'
                 )
-                audio_length_adjust = st.select_slider('Audio length', options=['short', 'meduim', 'long'],value=('meduim'))
+                audio_length_adjust = st.select_slider('Audio length', options=['short', 'medium', 'long'],value=('meduim'))
                 if audio_length_adjust == 'short':
                     audio_length = 200
-                elif audio_length_adjust == 'meduim':
+                elif audio_length_adjust == 'medium':
                     audio_length = 350
                 else:
                     audio_length = 500
@@ -515,11 +515,11 @@ def input_page(st, **state):
                     ['Informal', 'Professional', 'Humorous'],
                     key='opt3'
                 )
-                day = st.select_slider('Information volume', options=['small', 'meduim', 'large'],value=('meduim'))
+                day = st.select_slider('Information volume', options=['small', 'medium', 'large'],value=('meduim'))
                 if day == 'small':
                     st.session_state.day = 2
                     st.session_state.arxiv = 2
-                elif day == 'meduim':
+                elif day == 'medium':
                     st.session_state.day = 4
                     st.session_state.arxiv = 3
                 else:
