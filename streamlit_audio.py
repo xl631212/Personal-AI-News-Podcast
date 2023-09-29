@@ -502,8 +502,8 @@ def input_page(st, **state):
                     ("English", "中文"),
                     key='ahaha'
                 )
-                audio_length_adjust = st.select_slider('Audio length', options=['small', 'meduim', 'long'],value=('meduim'))
-                if audio_length_adjust == 'small':
+                audio_length_adjust = st.select_slider('Audio length', options=['short', 'meduim', 'long'],value=('meduim'))
+                if audio_length_adjust == 'short':
                     audio_length = 200
                 elif audio_length_adjust == 'meduim':
                     audio_length = 350
@@ -699,8 +699,8 @@ def compute_page(st, **state):
     my_bar.progress(90, text="Generating Podcast...")
     if st.session_state.language == 'English':
         print("脚本是这个",response)
-        updated = response.replace('-', '').replace('--', '').replace('"', '').replace('“', '')
-        command = f'edge-tts --voice en-US-AriaNeural --text "{response}" --write-media hello.mp3'
+        updated = response.replace('-', '').replace('--', '').replace('"', '').replace('“', '').replace('step-by-step. ','')
+        command = f'edge-tts --voice en-US-AriaNeural --text "{updated}" --write-media hello.mp3'
         subprocess.run(command, shell=True)
         my_bar.progress(90, text="Generating Summary...")
 
