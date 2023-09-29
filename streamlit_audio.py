@@ -697,7 +697,9 @@ def compute_page(st, **state):
     
     my_bar.progress(90, text="Generating Podcast...")
     if st.session_state.language == 'English':
-        command = f'edge-tts --text "{response}" --write-media hello.mp3'
+        updated = str(response)
+        updated = updated.replace('<|endoftext|>', '')
+        command = f'edge-tts --text "{updated}" --write-media hello.mp3'
         subprocess.run(command, shell=True)
         my_bar.progress(90, text="Generating Summary...")
 
