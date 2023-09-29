@@ -723,7 +723,7 @@ def compute_page(st, **state):
     if st.session_state.language == 'English':
         updated_text = response
         # 构建 edge-tts 命令
-        command = f'edge-tts --text "{updated_text}" --write-media hello.mp3'
+        command = f'edge-tts --text "{response}" --write-media hello.mp3'
         # 使用 subprocess 运行命令
         subprocess.run(command, shell=True)
 
