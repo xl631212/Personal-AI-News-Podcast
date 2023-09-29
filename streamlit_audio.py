@@ -514,6 +514,44 @@ def input_page(st, **state):
         
       
 def compute_page(st, **state):
+    # Include Font Awesome CSS
+    st.markdown(
+        """
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Style and position the GitHub and Twitter icons at the bottom left corner
+    st.markdown(
+        """
+        <style>
+            .social-icons {
+                gap: 10px;  # Space between icons
+            }
+            .social-icons a i {
+                color: #6c6c6c;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    # Add the GitHub and Twitter icons with hyperlinks
+    github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
+    twitter_url = "https://twitter.com/xuying_lee"  # replace with your Twitter profile URL
+
+    st.markdown("""
+    <h1 style='text-align: center; color: black;'>
+        Your Personal <span style='color: #FF4B4B; font-size: 1.25em;'>AI News</span> Podcast
+    </h1>
+    <div class="social-icons" style='text-align: center; color: black;'>
+            <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
+            <a href="https://twitter.com/xuying_lee" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+        </div>
+    """, 
+    unsafe_allow_html=True
+    )
     st.markdown("""
     <h1 style='text-align: center; color: black;'>
         Your Personal <span style='color: #FF4B4B; font-size: 1.30em;'>AI News</span> Podcast
