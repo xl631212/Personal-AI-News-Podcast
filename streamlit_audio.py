@@ -47,6 +47,47 @@ system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
 
+def find_next_link_text(url, target_link, target_text):
+    """
+    Find the first link and text after the given target link and text on the specified URL.
+    
+    Parameters:
+        url (str): The URL of the webpage to scrape.
+        target_link (str): The specific link to be found.
+        target_text (str): The specific link text to be found.
+        
+    Returns:
+        tuple: A tuple containing the next link and its text. Returns (None, None) if not found.
+    """
+    
+    # Send a GET request
+    response = requests.get(url)
+    response.raise_for_status()  # This will raise an exception if there's an error
+    
+    # Parse the content using BeautifulSoup
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    # Find all the <ul> elements
+    ul_elems = soup.find_all('ul')
+    
+    # Initialize a list to store all links and their texts
+    all_links = []
+    
+    # Extract links and texts from all <ul> elements
+    for ul_elem in ul_elems:
+        links = [(link.get('href'), link.text) for link in ul_elem.find_all('a')]
+        all_links.extend(links)
+    
+    # Extract the first link and text after the specified link-text pair
+    found = False
+    for link, text in all_links:
+        if found:
+            return link, text
+        if link == target_link and text == target_text:
+            found = True
+            
+    return None, None
+  
 def is_link_accessible(url):
     """Check if a link is accessible."""
     try:
@@ -566,7 +607,6 @@ def compute_page(st, **state):
     my_bar = progress_placeholder.progress(0, text=progress_text)
     openai_blog_url = get_latest_openai_blog_url()
     if openai_blog_url:
-        
         openai_title = get_h1_from_url(openai_blog_url)
         openai_blog = summarize_website_content(openai_blog_url)
 
@@ -623,7 +663,11 @@ def compute_page(st, **state):
     h_content = summarize_website_content(data_mrf_link)
 
     my_bar.progress(75, text="Nvidia Podcast...")
-    n_content = summarize_website_content('https://blogs.nvidia.com/ai-podcast/')
+    url = "https://blogs.nvidia.com/ai-podcast/"
+    target_link = "https://blogs.nvidia.com/ai-podcast/"
+    target_text = "AI Podcast"
+    next_link, Nvidia_title = find_next_link_text(url, target_link, target_text)
+    n_content = summarize_website_content(next_link)
 
     my_bar.progress(80, text="Writing Newsletter...")
     print(google_news['summary'], bair_blog, mit_blog, openai_blog, ariv_essay)
@@ -705,8 +749,8 @@ def compute_page(st, **state):
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lex Fridman</span>', unsafe_allow_html=True)
         st.markdown(lexi_boardcast)
 
-        st.markdown(f'<a href="https://blogs.nvidia.com/ai-podcast/" style="color:  #2859C0; text-decoration: none; \
-            font-size: 20px;font-weight: bold;">The AI Podcast</a>\
+        st.markdown(f'<a href="{next_link}" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{Nvidia_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Nvidia</span>', unsafe_allow_html=True)
         st.markdown(n_content)
 
