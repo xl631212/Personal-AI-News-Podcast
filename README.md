@@ -1,6 +1,7 @@
-# Stay Ahead: Real-time News and Podcasts with LLM
+# Your Personal AI News Podcast
 
-Stay Ahead leverages Large Language Models (LLM) and web scraping techniques to curate a real-time newsletter based on the latest updates, research, blogs, and discussions in the field of AI.
+Empower Your Day with Real-Time Insights: Leveraging AI for Instant News
+and Podcast Updates.
 
 ## App Preview
 
@@ -15,8 +16,8 @@ Stay Ahead leverages Large Language Models (LLM) and web scraping techniques to 
 2. **Wide Source Integration**: Summarizes content from esteemed platforms including:
    - Openai Blog
    - HackerNews
-   - BAIR Blog
-   - MIT AI News
+   - Nvidia Blog
+   - Techcrunch News
    - Google News
 3. **Newsletter and Podcast Generation**: Not only presents written content but also converts it into an immersive audio experience.
 [TBD]4. **Interactive User Interface**: (If applicable) Provides a user-friendly web interface for customizing content preferences.
