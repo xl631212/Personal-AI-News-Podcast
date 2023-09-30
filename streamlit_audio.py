@@ -421,7 +421,7 @@ def input_page(st, **state):
     </h1>
     <div class="social-icons" style='text-align: center; color: black;'>
             <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
-            <a href="https://twitter.com/xuying_lee" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+            <a href="https://twitter.com/li_xuying" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
         </div>
     """, 
     unsafe_allow_html=True
@@ -596,7 +596,7 @@ def compute_page(st, **state):
     </h1>
     <div class="social-icons" style='text-align: center; color: black;'>
             <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
-            <a href="https://twitter.com/xuying_lee" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+            <a href="https://twitter.com/li_xuying" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
         </div>
     """, 
     unsafe_allow_html=True
