@@ -413,7 +413,7 @@ def input_page(st, **state):
 
     # Add the GitHub and Twitter icons with hyperlinks
     github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
-    twitter_url = "https://twitter.com/xuying_lee"  # replace with your Twitter profile URL
+    twitter_url = "https://twitter.com/li_xuying"  # replace with your Twitter profile URL
 
     st.markdown("""
     <h1 style='text-align: center; color: black;'>
@@ -588,7 +588,7 @@ def compute_page(st, **state):
 
     # Add the GitHub and Twitter icons with hyperlinks
     github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
-    twitter_url = "https://twitter.com/xuying_lee"  # replace with your Twitter profile URL
+    twitter_url = "https://twitter.com/li_xuying"  # replace with your Twitter profile URL
 
     st.markdown("""
     <h1 style='text-align: center; color: black;'>
