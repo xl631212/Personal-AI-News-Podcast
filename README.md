@@ -5,7 +5,7 @@ Stay Ahead leverages Large Language Models (LLM) and web scraping techniques to 
 ## App Preview
 
 <p float="left">
-  <img src="截屏2023-09-20 09.20.03.png" width="100%" />
+  <img src="截屏2023-09-30 10.58.48.png" width="100%" />
 </p>
 
 ## App Link：https://llmnewsletter-cup7ts82sxzkzyszvquh4l.streamlit.app/
@@ -46,9 +46,9 @@ As we continue to improve Stay Ahead, we have several exciting features and enha
 - [✅] **Add More Information Sources**: Integrate even more data sources to provide a comprehensive view of the latest developments in the field of AI.
    
 - [ ] **Advanced Settings**: Give users more control over their podcast experience with:
-   - [ ] **2.1 Voice Duration**: Adjust the speed and length of the audio to fit your schedule.
-   - [ ] **2.2 Linguistic Style**: Choose between formal, casual, or other voice styles to match your preference.
-   - [ ] **2.3 Language Selection**: Multiple language options to cater to our diverse user base.
+   - [✅] **2.1 Voice Duration**: Adjust the speed and length of the audio to fit your schedule.
+   - [✅] **2.2 Linguistic Style**: Choose between formal, casual, or other voice styles to match your preference.
+   - [✅] **2.3 Language Selection**: Multiple language options to cater to our diverse user base.
    - [ ] **2.4 Source Filtering**: Select and prioritize the sources you're most interested in.
    
 - [ ] **User Feedback Functionality**: Implement a direct feedback mechanism within the app to gather invaluable insights from users.
