@@ -217,7 +217,7 @@ def get_h1_from_url(url):
     
 
 def summarize_documents(split_docs):
-    llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo-16k")
+    llm = ChatOpenAI(temperature=1, model_name="gpt-3.5-turbo-16k")
     chain = load_summarize_chain(llm, chain_type="map_reduce")
     summary = chain.run(split_docs)
     return summary
@@ -225,7 +225,7 @@ def summarize_documents(split_docs):
 
 def get_completion_from_messages(messages,
                                  model="gpt-3.5-turbo-16k",
-                                 temperature=0.5, max_tokens=7000):
+                                 temperature=1.5, max_tokens=7000):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
@@ -267,7 +267,7 @@ def fetch_gnews_links(query, language='en', country='US', period='1d', start_dat
 
 
 
-def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k", chain_type="stuff"):
+def summarize_website_content(url, temperature=1, model_name="gpt-3.5-turbo-16k", chain_type="stuff"):
     """
     Summarize the content of a given website URL.
 
