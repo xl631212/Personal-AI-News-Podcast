@@ -694,7 +694,7 @@ def compute_page(st, **state):
 
     my_bar.progress(80, text="Writing Newsletter...")
 
-    query = n_content + str(google_news['summary'])  + bair_blog  + str(mit_blog)  + str(h_content)\
+    query = n_content + str(google_news['summary'])  + str(mit_blog)  + str(h_content)\
               + openai_blog + 'new arxiv essay' + ariv_essay
     
     query = query.replace('<|endoftext|>', '')
