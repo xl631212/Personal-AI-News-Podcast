@@ -704,7 +704,7 @@ def compute_page(st, **state):
                     {'role':'user',
                     'content': f"【{query}】"},]
     response = get_completion_from_messages(messages)
-    
+    print(response)
     my_bar.progress(90, text="Generating Podcast...")
     if st.session_state.language == 'English':
         updated = response.replace('-', '').replace('--', '').replace('"', '').replace('“', '')
