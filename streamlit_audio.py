@@ -694,7 +694,7 @@ def compute_page(st, **state):
 
     my_bar.progress(80, text="Writing Newsletter...")
 
-    query = n_content + str(google_news['summary'])  + str(mit_blog)  \
+    query = str(google_news['summary'])+ n_content + str(mit_blog)  \
               + openai_blog
     
     query = query.replace('<|endoftext|>', '')
@@ -707,7 +707,7 @@ def compute_page(st, **state):
     print(response)
     my_bar.progress(90, text="Generating Podcast...")
     if st.session_state.language == 'English':
-        updated = response.replace('-', '').replace('--', '').replace('"', '').replace('“', '')
+        updated = response.replace('-', '')
         command = f'edge-tts --text "{updated}" --write-media hello.mp3'
         subprocess.run(command, shell=True)
         my_bar.progress(90, text="Generating Summary...")
