@@ -585,36 +585,50 @@ def compute_page(st, **state):
         """,
         unsafe_allow_html=True,
     )
-
-    # Style and position the GitHub and Twitter icons at the bottom left corner
+    # Include Font Awesome CSS
+  
     st.markdown(
-        """
-        <style>
-            .social-icons {
-                gap: 10px;  # Space between icons
-            }
-            .social-icons a i {
-                color: #6c6c6c;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
+    """
+    <style>
+        .social-icons {
+            gap: 20px;  # Space between icons
+        }
+        .social-icons a {
+            margin-left: 7px;
+            margin-right: 7px;
+        }
+        .social-icons .fa-github {
+            color: gray;
+        }
+        .social-icons .fa-twitter {
+            color: gray;
+        }
+        .social-icons .fa-discord {
+            color: gray;
+            font-size: 2em;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+    )
 
     # Add the GitHub and Twitter icons with hyperlinks
-    github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
-    twitter_url = "https://twitter.com/li_xuying"  # replace with your Twitter profile URL
 
-    st.markdown("""
-    <h1 style='text-align: center; color: black;'>
+    st.markdown(
+        f"""
+        <h1 style='text-align: center; color: black; display: flex; align-items: center; justify-content: center;'>
+        <span style='background-color: #FF4B4B; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; margin-right: 10px; position: relative; top: -8px;'>
+            <i class='fas fa-play' style='color: white; font-size: 18px; position: relative; left: 1px;'></i>
+        </span>
         Your Personal <span style='color: #FF4B4B; font-size: 1.25em;'>AI News</span> Podcast
-    </h1>
-    <div class="social-icons" style='text-align: center; color: black;'>
-            <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
-            <a href="https://twitter.com/li_xuying" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+        </h1>
+        <div class="social-icons" style='text-align: center; color: black;'>
+                <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
+                <a href="https://twitter.com/xuying_lee" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+                <a href="https://discord.gg/ZSMNztFE"><i class="fab fa-discord"></i></a>
         </div>
-    """, 
-    unsafe_allow_html=True
+        """, 
+        unsafe_allow_html=True
     )
    
     st.markdown("""
