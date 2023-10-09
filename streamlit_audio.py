@@ -389,6 +389,13 @@ def contains_keywords(s):
 
 def input_page(st, **state):
     # Include Font Awesome CSS
+    st.markdown(
+        """
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        """,
+        unsafe_allow_html=True,
+    )
+    # Include Font Awesome CSS
   
     st.markdown(
     """
