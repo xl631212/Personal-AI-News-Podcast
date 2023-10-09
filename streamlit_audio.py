@@ -389,25 +389,26 @@ def contains_keywords(s):
 
 def input_page(st, **state):
     # Include Font Awesome CSS
-    st.markdown(
-        """
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Style and position the GitHub and Twitter icons at the bottom left corner
+  
     st.markdown(
     """
     <style>
         .social-icons {
-            gap: 10px;  # Space between icons
+            gap: 20px;  # Space between icons
+        }
+        .social-icons a {
+            margin-left: 7px;
+            margin-right: 7px;
         }
         .social-icons .fa-github {
             color: gray;
         }
         .social-icons .fa-twitter {
             color: gray;
+        }
+        .social-icons .fa-discord {
+            color: gray;
+            font-size: 2em;
         }
     </style>
     """,
@@ -427,10 +428,12 @@ def input_page(st, **state):
         <div class="social-icons" style='text-align: center; color: black;'>
                 <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
                 <a href="https://twitter.com/xuying_lee" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+                <a href="https://discord.gg/ZSMNztFE"><i class="fab fa-discord"></i></a>
         </div>
         """, 
         unsafe_allow_html=True
     )
+
     st.markdown("<h3 style='text-align: center; color: black;'>Empower Your Day with Real-Time Insights: Leveraging AI for Instant News <br> and Podcast Updates.</h3>", unsafe_allow_html=True)
     st.markdown("""
         <h4 style='text-align: center; color: #6C6C6C;'>
