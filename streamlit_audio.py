@@ -767,12 +767,14 @@ def compute_page(st, **state):
     my_bar.progress(100, text="Almost there...")
 
     with radio_placeholder:
-        #audio_file = open('hello.mp3', 'rb')
-        #audio_bytes = audio_file.read()
-        #st.audio(audio_bytes, format='wav')
+        # 获取当前工作目录
+        current_directory = os.getcwd()
+        # 拼接完整的文件路径
         if st.session_state.language == 'English':
-          autoplay_audio("hello.mp3")
+          file_path = os.path.join(current_directory, "hello.mp3")
+          autoplay_audio(file_path)
         else:
+          file_path = os.path.join(current_directory, "hello2.mp3")
           autoplay_audio("hello2.mp3")
         
 
