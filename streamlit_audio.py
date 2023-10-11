@@ -772,7 +772,7 @@ def compute_page(st, **state):
         # 拼接完整的文件路径
         if st.session_state.language == 'English':
           file_path = os.path.join(current_directory, "hello.mp3")
-          autoplay_audio(file_path)
+          autoplay_audio("hello.mp3")
         else:
           file_path = os.path.join(current_directory, "hello2.mp3")
           autoplay_audio("hello2.mp3")
