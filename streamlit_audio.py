@@ -268,18 +268,7 @@ def fetch_gnews_links(query, language='en', country='US', period='1d', start_dat
 
 
 def summarize_website_content(url, temperature=1, model_name="gpt-3.5-turbo-16k", chain_type="stuff"):
-    """
-    Summarize the content of a given website URL.
-
-    Parameters:
-    - url (str): The website URL to fetch and summarize.
-    - temperature (float, optional): Temperature parameter for ChatOpenAI model. Default is 0.
-    - model_name (str, optional): The model name for ChatOpenAI. Default is "gpt-3.5-turbo-16k".
-    - chain_type (str, optional): The type of summarization chain to use. Default is "stuff".
-
-    Returns:
-    - The summarized content.
-    """
+    
     if True:
         # Load the content from the given URL
         loader = WebBaseLoader(url)
@@ -422,7 +411,8 @@ def input_page(st, **state):
     unsafe_allow_html=True,
     )
 
-    # Add the GitHub and Twitter icons with hyperlinks
+    # Add the GitHub, Twitter and discord icons with hyperlinks
+    discord = "https://discord.com/invite/aKkmnn4uWy"
 
     st.markdown(
         f"""
@@ -612,7 +602,8 @@ def compute_page(st, **state):
     unsafe_allow_html=True,
     )
 
-    # Add the GitHub and Twitter icons with hyperlinks
+    # Add the GitHub, Twitter discord icons with hyperlinks
+    discord = "https://discord.com/invite/aKkmnn4uWy"
 
     st.markdown(
         f"""
