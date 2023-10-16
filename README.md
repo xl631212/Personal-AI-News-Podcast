@@ -9,7 +9,7 @@ and Podcast Updates.
   <img src="截屏2023-09-30 10.58.48.png" width="100%" />
 </p>
 
-## App Link：https://llmnewsletter-cup7ts82sxzkzyszvquh4l.streamlit.app/
+## App Link：http://ai-dailynews.com/
 ## Features:
 
 1. **Real-time Content Aggregation**: Gathers the freshest research, blogs, discussions, and news related to AI.
