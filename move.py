@@ -483,21 +483,12 @@ def input_page(st, **state):
             webbrowser.open_new_tab('http://ai-dailynews.com/')
     
     with button_placeholder_1:
-        def get_image_base64(image_path):
-            with open(image_path, "rb") as img_file:
-                return base64.b64encode(img_file.read()).decode('utf-8')
-
-        def display_linked_image(image_path, link_url, alt_text="Image", width=None):
-            image_base64 = get_image_base64(image_path)
-            width_str = f'width="{width}"' if width else ""
-            html_code = f"""<a href="{link_url}" target="_blank" style="display: block; margin: 0 auto;">
-                    <img src="data:image/jpeg;base64,{image_base64}" alt="{alt_text}" {width_str} style="display: block; margin: 0 auto;">
-                </a>"""
-            st.write(html_code, unsafe_allow_html=True)
-
-        image_path = "WechatIMG5695.jpg"  # 修改为您的本地图片路径
-        link_url = "https://www.producthunt.com/posts/ai-daily-news-beta"
-        display_linked_image(image_path, link_url, width=300)
+        html_code = '''
+        <div style="display: flex; justify-content: center;">
+            <iframe style="border: none;" src="https://cards.producthunt.com/cards/posts/418805?v=1" width="500" height="405" frameborder="0" scrolling="no" allowfullscreen></iframe>
+        </div>
+        '''
+        st.write(html_code, unsafe_allow_html=True)
 
     st.markdown("""
         <style>
