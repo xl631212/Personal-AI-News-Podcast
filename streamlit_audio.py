@@ -564,6 +564,22 @@ def input_page(st, **state):
         </style>
         <div class="footer">Made with ❤️ by Xuying Li</div>
     """, unsafe_allow_html=True)
+    badge_code = """
+    <style>
+        .badge-container {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+    </style>
+    <div class="badge-container">
+        <a href="https://www.producthunt.com/posts/ai-daily-news-beta?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-ai&#0045;daily&#0045;news&#0045;beta" target="_blank">
+            <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=418805&theme=light" alt="AI&#0045;Daily&#0032;News&#0032;&#0040;Beta&#0041; - AI&#0045;generated&#0032;news&#0032;podcast&#0032;customized&#0032;to&#0032;your&#0032;preferences | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
+        </a>
+    </div>
+    """
+    st.markdown(badge_code, unsafe_allow_html=True)
         
         
       
@@ -1040,6 +1056,22 @@ def compute_page(st, **state):
     </style>
     <div class="footer">Made with ❤️ by Xuying Li</div>
 """, unsafe_allow_html=True)
+    badge_code = """
+    <style>
+        .badge-container {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+    </style>
+    <div class="badge-container">
+        <a href="https://www.producthunt.com/posts/ai-daily-news-beta?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-ai&#0045;daily&#0045;news&#0045;beta" target="_blank">
+            <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=418805&theme=light" alt="AI&#0045;Daily&#0032;News&#0032;&#0040;Beta&#0041; - AI&#0045;generated&#0032;news&#0032;podcast&#0032;customized&#0032;to&#0032;your&#0032;preferences | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
+        </a>
+    </div>
+    """
+    st.markdown(badge_code, unsafe_allow_html=True)
 
 def page_one():
     input_page(st)
