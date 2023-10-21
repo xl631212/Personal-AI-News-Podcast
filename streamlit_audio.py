@@ -9,6 +9,8 @@ import arxiv
 import subprocess
 import base64
 import openai
+import io
+from PIL import Image
 import streamlit as st
 from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.utilities import GoogleSerperAPIWrapper
@@ -26,9 +28,11 @@ from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
 
+
 os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
 os.environ["OPENAI_API_KEY"]= st.secrets["OPENAI_API_KEY"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
+
 
 system_message = '''
                 You are a very talented editor, skilled at consolidating 
@@ -44,6 +48,28 @@ system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
 
+def get_image_as_base64_string(path):
+    with open(path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
+    
+
+def get_resized_image_as_base64_string(path, factor=0.1):
+    # Open and resize the image
+    with Image.open(path) as img:
+        # Convert image to RGB if it's in RGBA
+        if img.mode == 'JPEG':
+            st.witre(img.mode)
+            img = img.convert('RGB')
+
+        width, height = img.size
+        new_size = (int(width * factor), int(height * factor))
+        img_resized = img.resize(new_size)
+        
+        # Convert the resized image to a base64 string
+        buffered = io.BytesIO()
+        img_resized.save(buffered, format='PNG')
+        return base64.b64encode(buffered.getvalue()).decode()
+    
 def find_next_link_text(url, target_link, target_text):
     """
     Find the first link and text after the given target link and text on the specified URL.
@@ -414,20 +440,22 @@ def input_page(st, **state):
     # Add the GitHub, Twitter and discord icons with hyperlinks
     discord = "https://discord.com/invite/aKkmnn4uWy"
 
+    image_path = 'MS_Startups_FH_lockup_hrz_alt_1C_Blk.png'
+    # Convert the resized image to a base64 string
     st.markdown(
         f"""
         <h1 style='text-align: center; color: black; display: flex; align-items: center; justify-content: center;'>
-        <span style='background-color: #FF4B4B; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; margin-right: 10px; position: relative; top: -8px;'>
-            <i class='fas fa-play' style='color: white; font-size: 18px; position: relative; left: 1px;'></i>
-        </span>
-        Your Personal <span style='color: #FF4B4B; font-size: 1.25em;'>AI News</span> Podcast
+            <span style='background-color: #FF4B4B; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; margin-right: 10px; position: relative; top: -8px;'>
+                <i class='fas fa-play' style='color: white; font-size: 18px; position: relative; left: 1px;'></i>
+            </span>
+            Your Personal <span style='color: #FF4B4B; font-size: 1.25em;'>AI News</span> Podcast
         </h1>
         <div class="social-icons" style='text-align: center; color: black;'>
-                <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
-                <a href="https://twitter.com/li_xuying" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
-                <a href="https://discord.com/invite/aKkmnn4uWy"><i class="fab fa-discord"></i></a>
+            <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
+            <a href="https://twitter.com/li_xuying" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
+            <a href="https://discord.com/invite/aKkmnn4uWy"><i class="fab fa-discord"></i></a>
         </div>
-        """, 
+        """,
         unsafe_allow_html=True
     )
 
@@ -513,6 +541,7 @@ def input_page(st, **state):
                     audio_length = 500
                 st.session_state.audio_length = audio_length
 
+
             
             with col8:
                 options_2 = st.selectbox(
@@ -548,22 +577,28 @@ def input_page(st, **state):
                 You should be able to recognize and exaggerate humorous elements of each article along with jokes and deliver them in a way 
                 that will make the audience laugh."""
 
+    image_path = 'MS_Startups_FH_lockup_hrz_alt_1C_Blk.png'
+    # Convert the resized image to a base64 string
+    image_base64 = get_resized_image_as_base64_string(image_path, factor=0.08)
+    st.markdown(f"""
+    <style>
+        .footer {{
+            position: fixed;
+            bottom: 0px;
+            left: 10px;
+            width: auto;
+            background-color: transparent;
+            text-align: right;
+            padding-right: 10px;
+            padding-bottom: 10px;
+        }}
+    </style>
+    <div class="footer">
+        <img src="data:image/jpg;base64,{image_base64}" alt="footer_image" />
+    </div>
+""", unsafe_allow_html=True)
 
-    st.markdown("""
-        <style>
-            .footer {
-                position: fixed;
-                bottom: 0;
-                left: 10px;
-                width: auto;
-                background-color: transparent;
-                text-align: right;
-                padding-right: 10px;
-                padding-bottom: 10px;
-            }
-        </style>
-        <div class="footer">Made with ❤️ by Xuying Li</div>
-    """, unsafe_allow_html=True)
+    
     badge_code = """
     <style>
         .badge-container {
@@ -580,6 +615,7 @@ def input_page(st, **state):
     </div>
     """
     st.markdown(badge_code, unsafe_allow_html=True)
+
         
         
       
@@ -1056,22 +1092,7 @@ def compute_page(st, **state):
     </style>
     <div class="footer">Made with ❤️ by Xuying Li</div>
 """, unsafe_allow_html=True)
-    badge_code = """
-    <style>
-        .badge-container {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            z-index: 1000;
-        }
-    </style>
-    <div class="badge-container">
-        <a href="https://www.producthunt.com/posts/ai-daily-news-beta?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-ai&#0045;daily&#0045;news&#0045;beta" target="_blank">
-            <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=418805&theme=light" alt="AI&#0045;Daily&#0032;News&#0032;&#0040;Beta&#0041; - AI&#0045;generated&#0032;news&#0032;podcast&#0032;customized&#0032;to&#0032;your&#0032;preferences | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
-        </a>
-    </div>
-    """
-    st.markdown(badge_code, unsafe_allow_html=True)
+    
 
 def page_one():
     input_page(st)
@@ -1111,6 +1132,3 @@ def main():
 if __name__ == "__main__":
     st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
     main()
-
-
-
