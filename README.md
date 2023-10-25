@@ -1,9 +1,5 @@
 # Your Personal AI News Podcast
 
-<p float="left">
-  <img src="MS_Startups_FH_lockup_hrz_alt_OnDrk_RGB.png" width="100%" />
-</p>
-
 Empower Your Day with Real-Time Insights: Leveraging AI for Instant News
 and Podcast Updates.
 
@@ -64,7 +60,6 @@ Stay tuned for these updates and more as we strive to make Stay Ahead your go-to
 ## Contribute
 
 Contributions are always welcome! Please ensure any pull requests are made against the `develop` branch.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+<p float="left">
+  <img src="MS_Startups_FH_lockup_hrz_alt_OnDrk_RGB.png" width="100%" />
+</p>
