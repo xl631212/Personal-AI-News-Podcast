@@ -1,7 +1,7 @@
 # Your Personal AI News Podcast
 
 <p float="left">
-  <img src="MS_Startups_FH_lockup_hrz_alt_1C_Blk.png" width="100%" />
+  <img src="MS_Startups_FH_lockup_hrz_alt_OnDrk_RGB.png" width="100%" />
 </p>
 
 Empower Your Day with Real-Time Insights: Leveraging AI for Instant News
