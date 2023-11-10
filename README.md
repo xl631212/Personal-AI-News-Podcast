@@ -6,7 +6,7 @@ and Podcast Updates.
 ## App Preview
 
 <p float="left">
-  <img src="截屏2023-09-30 10.58.48.png" width="100%" />
+  <img src="截屏2023-11-10 13.33.26.png" width="100%" />
 </p>
 
 ## App Link：http://ai-dailynews.com/
