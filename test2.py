@@ -1,3 +1,5 @@
+import openai
+import streamlit as st
 import os
 import pprint
 import requests
@@ -8,8 +10,6 @@ import edge_tts
 import arxiv
 import subprocess
 import base64
-import openai
-import streamlit as st
 from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.llms.openai import OpenAI
@@ -22,19 +22,22 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain.chat_models import ChatOpenAI
 from langchain.agents import initialize_agent, Tool
 from langchain.agents import AgentType
+from hackernews import HackerNews
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
+from langchain.schema import Document
 
 
-
-os.environ["SERPER_API_KEY"] = st.secrets["SERPER_API_KEY"]
-os.environ["OPENAI_API_KEY"]= st.secrets["OPENAI_API_KEY"]
+os.environ["SERPER_API_KEY"] = "c2973e70fb0e4d0a1e756b260cdbf0bc56ccdb56"
+os.environ["serper_api_key"]= "c2973e70fb0e4d0a1e756b260cdbf0bc56ccdb56"
+os.environ["OPENAI_API_KEY"] = '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'
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
+
 system_message = '''
-                You are a very talented editor, skilled at consolidating 
-                fragmented information and introductions into a cohesive script, without missing any details.
+                You are a very talented news editor, skilled at consolidating 
+                fragmented information and introductions into a cohesive news script, without missing any details.
                 Compile the news article based on the information in 【】.  
                 '''
 
@@ -46,47 +49,6 @@ system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
 
-def find_next_link_text(url, target_link, target_text):
-    """
-    Find the first link and text after the given target link and text on the specified URL.
-    
-    Parameters:
-        url (str): The URL of the webpage to scrape.
-        target_link (str): The specific link to be found.
-        target_text (str): The specific link text to be found.
-        
-    Returns:
-        tuple: A tuple containing the next link and its text. Returns (None, None) if not found.
-    """
-    
-    # Send a GET request
-    response = requests.get(url)
-    response.raise_for_status()  # This will raise an exception if there's an error
-    
-    # Parse the content using BeautifulSoup
-    soup = BeautifulSoup(response.content, 'html.parser')
-    
-    # Find all the <ul> elements
-    ul_elems = soup.find_all('ul')
-    
-    # Initialize a list to store all links and their texts
-    all_links = []
-    
-    # Extract links and texts from all <ul> elements
-    for ul_elem in ul_elems:
-        links = [(link.get('href'), link.text) for link in ul_elem.find_all('a')]
-        all_links.extend(links)
-    
-    # Extract the first link and text after the specified link-text pair
-    found = False
-    for link, text in all_links:
-        if found:
-            return link, text
-        if link == target_link and text == target_text:
-            found = True
-            
-    return None, None
-  
 def is_link_accessible(url):
     """Check if a link is accessible."""
     try:
@@ -227,7 +189,7 @@ def summarize_documents(split_docs):
 
 def get_completion_from_messages(messages,
                                  model="gpt-3.5-turbo-16k",
-                                 temperature=0.5, max_tokens=7000):
+                                 temperature=0.5, max_tokens=8000):
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,
@@ -236,7 +198,7 @@ def get_completion_from_messages(messages,
     )
     return response.choices[0].message["content"]
 
-def fetch_gnews_links(query, language='en', country='US', period='2d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
+def fetch_gnews_links(query, language='en', country='US', period='1d', start_date=None, end_date=None, max_results=5, exclude_websites=None):
     """
     Fetch news links from Google News based on the provided query.
 
@@ -282,7 +244,7 @@ def summarize_website_content(url, temperature=0, model_name="gpt-3.5-turbo-16k"
     Returns:
     - The summarized content.
     """
-    if True:
+    if is_link_accessible(url):
         # Load the content from the given URL
         loader = WebBaseLoader(url)
         docs = loader.load()
@@ -387,6 +349,18 @@ def get_all_text_from_url(url):
 def contains_keywords(s):
     keywords = ["AI", "GPT", "LLM"]
     return any(keyword in s for keyword in keywords)
+
+
+def heacker_news_content():
+    hn = HackerNews()
+    content = {'title':[], 'summary':[], 'url':[]}
+    for news in hn.top_stories()[:25]:
+        if contains_keywords(hn.item(news).title):
+            if 'url' in dir(hn.item(news)):
+                content['title'].append(hn.item(news).title)
+                content['url'].append(hn.item(news).url)
+                content['summary'].append(summarize_website_content(hn.item(news).url))
+    return content
 
 
 def input_page(st, **state):
@@ -501,23 +475,23 @@ def input_page(st, **state):
                     ("English", "中文"),
                     key='ahaha'
                 )
-                audio_length_adjust = st.select_slider('Audio length', options=['small', 'meduim', 'long'],value=('meduim'))
+                audio_length_adjust = st.select_slider('Audio length', options=['small', 'meduim', 'large'])
                 if audio_length_adjust == 'small':
                     audio_length = 200
                 elif audio_length_adjust == 'meduim':
-                    audio_length = 350
+                    audio_length = 300
                 else:
-                    audio_length = 500
+                    audio_length = 400
                 st.session_state.audio_length = audio_length
 
             
             with col8:
                 options_2 = st.selectbox(
                     'In a tone of',
-                    ['Informal', 'Professional', 'Humorous'],
+                    ['News', 'Enthusiastic', 'Humor'],
                     key='opt3'
                 )
-                day = st.select_slider('Information volume', options=['small', 'meduim', 'large'],value=('meduim'))
+                day = st.select_slider('News amount', options=['small', 'meduim', 'large'])
                 if day == 'small':
                     st.session_state.day = 2
                     st.session_state.arxiv = 2
@@ -537,13 +511,7 @@ def input_page(st, **state):
         if st.button("👆 Double-Click Generation"):
             st.session_state.page = "two"
             st.session_state.language = language
-            if options_2 == 'Informal':
-                st.session_state.tone = """read news and present them in a casual and conversational tone. 
-                You should use everyday language, contractions, and slang to engage the audience and make the news more relatable. """
-            elif options_2 == 'Humorous':
-                st.session_state.tone = """read news and present in a comical and amusing tone. 
-                You should be able to recognize and exaggerate humorous elements of each article along with jokes and deliver them in a way 
-                that will make the audience laugh."""
+            st.session_state.tone = options_2
 
 
     st.markdown("""
@@ -551,7 +519,7 @@ def input_page(st, **state):
             .footer {
                 position: fixed;
                 bottom: 0;
-                left: 10px;
+                right: 0;
                 width: auto;
                 background-color: transparent;
                 text-align: right;
@@ -562,48 +530,17 @@ def input_page(st, **state):
         <div class="footer">Made with ❤️ by Xuying Li</div>
     """, unsafe_allow_html=True)
         
-        
-      
+
+
 def compute_page(st, **state):
-    # Include Font Awesome CSS
-    st.markdown(
-        """
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Style and position the GitHub and Twitter icons at the bottom left corner
-    st.markdown(
-        """
-        <style>
-            .social-icons {
-                gap: 10px;  # Space between icons
-            }
-            .social-icons a i {
-                color: #6c6c6c;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    # Add the GitHub and Twitter icons with hyperlinks
-    github_url = "https://github.com/xl631212/llm_newsletter/tree/main"  # replace with your GitHub repo URL
-    twitter_url = "https://twitter.com/xuying_lee"  # replace with your Twitter profile URL
-
     st.markdown("""
-    <h1 style='text-align: center; color: black;'>
-        Your Personal <span style='color: #FF4B4B; font-size: 1.25em;'>AI News</span> Podcast
+    <h1 style='text-align: center; color: #333333;'>
+        Your Personal <span style='color: #FB5858; font-size: 1.30em;'>AI News</span> Podcast
     </h1>
-    <div class="social-icons" style='text-align: center; color: black;'>
-            <a href="https://github.com/xl631212/llm_newsletter/tree/main" target="_blank"><i class="fab fa-github fa-2x"></i></a>
-            <a href="https://twitter.com/xuying_lee" target="_blank"><i class="fab fa-twitter fa-2x"></i></a>
-        </div>
     """, 
     unsafe_allow_html=True
     )
-   
+    
     st.markdown("""
     <style>
         /* This styles the main content excluding h1 and h2 */
@@ -624,8 +561,8 @@ def compute_page(st, **state):
 
     my_bar.progress(10, text="Searching for Microsoft Blog...")
     url = "https://blogs.microsoft.com/"
-    M_title, Microsoft_link = extract_blog_link_info(url)
-    bair_blog = summarize_website_content(Microsoft_link)
+    M_title, link = extract_blog_link_info(url)
+    bair_blog = summarize_website_content(link)
 
 
     my_bar.progress(20, text="Searching for Amazon Blog...")
@@ -633,30 +570,19 @@ def compute_page(st, **state):
     mit_blog = summarize_website_content(A_link)
 
     my_bar.progress(30, text="Searching for Apple Blog...")
-    url = 'https://machinelearning.apple.com/'
+    Apple_blog = summarize_website_content('https://machinelearning.apple.com/')
     
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    
-    # 根据提供的HTML片段，定位到文章的标题和链接
-    article = soup.select_one('h3.post-title a')
-    apple_link = 'https://machinelearning.apple.com'+ article['href']
-    
-    Apple_blog_title = article.text
-    Apple_blog = summarize_website_content(apple_link)
-
     my_bar.progress(40, text='Searching for lexi friman boardcast...')
     url = "https://lexfridman.com/podcast/"
     link = get_transcript_link(url)
     L_title = get_h1_text(link)
     youtube_link = get_youtube_link(url)
     lexi_boardcast = summarize_website_content(youtube_link)
-    
 
     my_bar.progress(50, text="Searching for arxiv ...")
     search = arxiv.Search(
         query = "AI, LLM, machine learning, NLP",
-        max_results = st.session_state.arxiv,
+        max_results = 3,
         sort_by = arxiv.SortCriterion.SubmittedDate
     )
     ariv_essay = ''
@@ -667,38 +593,36 @@ def compute_page(st, **state):
     google_news = fetch_gnews_links(query='AI, LLM, Machine learning', max_results = st.session_state.day)
 
     my_bar.progress(70, text="Searching Techcrunch...")
-    url = 'https://techcrunch.com/category/artificial-intelligence/'
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    articles = soup.select('.post-block__title a')
-
-    data_mrf_link, h_title = articles[0]['href'],articles[0].text
+    url = "https://techcrunch.com/"
+    class_name = 'post-block__title__link'
+    data_mrf_link, h_title = extract_data_from_url(url, class_name)
     h_content = summarize_website_content(data_mrf_link)
 
+
     my_bar.progress(75, text="Nvidia Podcast...")
-    url = "https://blogs.nvidia.com/ai-podcast/"
-    target_link = "https://blogs.nvidia.com/ai-podcast/"
-    target_text = "AI Podcast"
-    next_link, Nvidia_title = find_next_link_text(url, target_link, target_text)
-    n_content = summarize_website_content(next_link)
+    n_content = summarize_website_content('https://blogs.nvidia.com/ai-podcast/')
 
     my_bar.progress(80, text="Writing Newsletter...")
-    print(google_news['summary'], bair_blog, mit_blog, openai_blog, ariv_essay)
+ 
     query = str(google_news['summary'])  + bair_blog  + str(mit_blog)  + str(h_content)\
               + openai_blog + 'new arxiv essay' + ariv_essay
     
     query = query.replace('<|endoftext|>', '')
     messages =  [
                     {'role':'system',
-                    'content': system_message + "keep it equal to {} words.".format(st.session_state.audio_length) + st.session_state.tone},
+                    'content': system_message + "keep it equal to {} words.".format(st.session_state.audio_length * 120)},
                     {'role':'user',
                     'content': f"【{query}】"},]
     response = get_completion_from_messages(messages)
-    
+
     my_bar.progress(90, text="Generating Podcast...")
     if st.session_state.language == 'English':
-        command = f'edge-tts --text "{response}" --write-media hello.mp3'
+        updated_text = response
+        # 构建 edge-tts 命令
+        command = f'edge-tts --text "{updated_text}" --write-media hello.mp3'
+        # 使用 subprocess 运行命令
         subprocess.run(command, shell=True)
+
         my_bar.progress(90, text="Generating Summary...")
 
         query = response
@@ -711,15 +635,15 @@ def compute_page(st, **state):
     
     else:
         before = response
-        before = before.replace('<|endoftext|>', '')
+        summary = before.replace('<|endoftext|>', '')
         messages =  [
                         {'role':'system',
                         'content': system_message_3},
                         {'role':'user',
-                        'content': f"【{before}】"},]
+                        'content': f"【{summary}】"},]
         after = get_completion_from_messages(messages)
         # 构建 edge-tts 命令
-        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello2.mp3'
+        command = f'edge-tts --voice zh-CN-XiaoyiNeural --text "{after}" --write-media hello.mp3'
         # 使用 subprocess 运行命令
         subprocess.run(command, shell=True)
 
@@ -730,60 +654,59 @@ def compute_page(st, **state):
         #audio_file = open('hello.mp3', 'rb')
         #audio_bytes = audio_file.read()
         #st.audio(audio_bytes, format='wav')
-        if st.session_state.language == 'English':
-          autoplay_audio("hello.mp3")
-        else:
-          autoplay_audio("hello2.mp3")
-        
+        autoplay_audio("hello.mp3")
+    
+            
 
     my_bar.empty()
+
     if st.session_state.language == 'English':
         st.subheader('Summary and Commentary', divider='rainbow')
         st.markdown(summary)
 
         st.subheader('Technology News', divider='red')
         for i in range(len(google_news['title'])):
-            if len(google_news['summary'][i]) > 100:
+            if 'No result' not in google_news['summary'][i]:
                 st.markdown(f'<a href="{google_news["url"][i]}" style="color: #2859C0; text-decoration: none; \
                 font-size: 20px;font-weight: bold;"> {google_news["title"][i]} </a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
                 st.markdown(google_news['summary'][i])
         
-        st.markdown(f'<a href="{data_mrf_link}" style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href="https://techcrunch.com/" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;">{h_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Techcrunch</span>', unsafe_allow_html=True)
         st.markdown(h_content)
 
         st.subheader('Podcast and Speeches', divider='orange')
 
-        st.markdown(f'<a href="{youtube_link}" style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href="https://lexfridman.com/podcast/" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;">{L_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lex Fridman</span>', unsafe_allow_html=True)
         st.markdown(lexi_boardcast)
 
-        st.markdown(f'<a href="{next_link}" style="color:  #2859C0; text-decoration: none; \
-            font-size: 20px;font-weight: bold;">{Nvidia_title}</a>\
+        st.markdown(f'<a href="https://blogs.nvidia.com/ai-podcast/" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">The AI Podcast</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Nvidia</span>', unsafe_allow_html=True)
         st.markdown(n_content)
-      
+        
         st.subheader('Technology Blogs', divider='green')
         st.markdown(f'<a href= {openai_blog_url} style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {openai_title}</a>\
                 <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Openai</span>', unsafe_allow_html=True)
         st.markdown(openai_blog)  
 
-        st.markdown(f'<a href={Microsoft_link} style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href={link} style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {M_title}</a>\
                 <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Microsoft</span>', unsafe_allow_html=True)
         st.markdown(bair_blog)
         
-        st.markdown(f'<a href="https://aws.amazon.com/blogs/machine-learning/" style="color:  #2859C0; text-decoration: none; \
+        st.markdown(f'<a href="{A_link}" style="color:  #2859C0; text-decoration: none; \
             font-size: 20px;font-weight: bold;"> {A_title}</a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Amazon</span>', unsafe_allow_html=True)
         st.markdown(mit_blog)
 
         st.markdown(
-            f'<a href={apple_link} style="color:  #2859C0; text-decoration: none; font-size: 20px; font-weight: bold;">{Apple_blog_title}</a>\
+            f'<a href="https://machinelearning.apple.com/" style="color:  #2859C0; text-decoration: none; font-size: 20px; font-weight: bold;">Recent research</a>\
             <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Apple</span>', 
             unsafe_allow_html=True
         )
@@ -801,7 +724,13 @@ def compute_page(st, **state):
 
     elif st.session_state.language == '中文':
         st.subheader('摘要与评论', divider='rainbow')
-        summary = after.replace('<|endoftext|>', '')
+        summary = summary.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"{summary}"},]
+        summary = get_completion_from_messages(messages)
         st.markdown(summary)
 
         st.subheader('科技新闻', divider='rainbow')
@@ -826,6 +755,28 @@ def compute_page(st, **state):
                 font-size: 20px;font-weight: bold;"> {title} </a>\
                     <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Google News</span>', unsafe_allow_html=True)
             st.markdown(news_summary)
+
+
+        st.subheader('播客与演讲', divider='orange')
+        lexi_boardcast = lexi_boardcast.replace('<|endoftext|>', '')
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"【{lexi_boardcast}】"},]
+        lexi_boardcast = get_completion_from_messages(messages)
+
+        messages =  [
+                        {'role':'system',
+                        'content': system_message_3},
+                        {'role':'user',
+                        'content': f"{L_title}"},]
+        L_title = get_completion_from_messages(messages)
+
+        st.markdown(f'<a href="https://www.youtube.com/@lexfridman/videos" style="color:  #2859C0; text-decoration: none; \
+            font-size: 20px;font-weight: bold;">{L_title}</a>\
+                    <span style="margin-left: 10px; background-color: white; padding: 0px 7px; border: 1px solid rgb(251, 88, 88); border-radius: 20px; font-size: 7px; color: rgb(251, 88, 88)">Lexi Fridman</span>', unsafe_allow_html=True)
+        st.markdown(lexi_boardcast)
         
         
         st.subheader('科技博客', divider='green')
@@ -913,20 +864,21 @@ def compute_page(st, **state):
                 ', unsafe_allow_html=True)
             st.markdown(result_summary)
     st.markdown("""
-    <style>
-        .footer {
-            position: fixed;
-            bottom: 0;
-            left: 10px;
-            width: auto;
-            background-color: transparent;
-            text-align: left;
-            padding-left: 10px;
-            padding-top: 10px;
-        }
-    </style>
-    <div class="footer">Made with ❤️ by Xuying Li</div>
-""", unsafe_allow_html=True)
+        <style>
+            .footer {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                width: auto;
+                background-color: transparent;
+                text-align: right;
+                padding-right: 10px;
+                padding-bottom: 10px;
+            }
+        </style>
+        <div class="footer">Made with ❤️ by Xuying Li</div>
+    """, unsafe_allow_html=True)
+
 
 def page_one():
     input_page(st)
@@ -944,7 +896,7 @@ def main():
         st.session_state.choice = ""
     
     if "language" not in st.session_state:
-        st.session_state.language = "English"
+        st.session_state.language = ""
 
     if "audio_length" not in st.session_state:
         st.session_state.audio_length = '5'
@@ -952,9 +904,6 @@ def main():
     if "day" not in st.session_state:
         st.session_state.day = 0
         st.session_state.arxiv = 0
-    
-    if "tone" not in st.session_state:
-        st.session_state.tone = ''
 
 
     # 根据session状态来渲染页面
@@ -966,6 +915,3 @@ def main():
 if __name__ == "__main__":
     st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
     main()
-
-
-
