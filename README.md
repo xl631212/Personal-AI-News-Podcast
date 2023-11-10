@@ -51,8 +51,8 @@ As we continue to improve Stay Ahead, we have several exciting features and enha
    - [✅] **2.2 Linguistic Style**: Choose between formal, casual, or other voice styles to match your preference.
    - [✅] **2.3 Language Selection**: Multiple language options to cater to our diverse user base.
    - [ ] **2.4 Source Filtering**: Select and prioritize the sources you're most interested in.
-   - [ ] **2.5 Content Filtering**: Select and prioritize the Content you're most interested in.
-   - [ ] **2.5 Select Voice character **: Select and prioritize the Content you're most interested in.
+   - [✅] **2.5 Content Filtering**: Select and prioritize the Content you're most interested in.
+   - [✅] **2.5 Select Voice character **: Select and prioritize the Content you're most interested in.
    
 - [ ] **User Feedback Functionality**: Implement a direct feedback mechanism within the app to gather invaluable insights from users.
 
