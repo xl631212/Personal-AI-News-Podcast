@@ -19,6 +19,7 @@ and Podcast Updates.
    - Nvidia Blog
    - Techcrunch News
    - Google News
+   - etc
 3. **Newsletter and Podcast Generation**: Not only presents written content but also converts it into an immersive audio experience.
 [TBD]4. **Interactive User Interface**: (If applicable) Provides a user-friendly web interface for customizing content preferences.
 
