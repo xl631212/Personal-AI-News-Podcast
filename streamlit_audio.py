@@ -1130,5 +1130,5 @@ def main():
         page_two()
 
 if __name__ == "__main__":
-    st.set_page_config(layout="wide", initial_sidebar_state="collapsed")
+    st.set_page_config(layout="wide", initial_sidebar_state="collapsed",page_title="AI Generated Podcast")
     main()
