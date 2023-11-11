@@ -13,7 +13,6 @@ import io
 from PIL import Image
 import streamlit as st
 from langchain.utilities import GoogleSerperAPIWrapper
-from langchain.utilities import GoogleSerperAPIWrapper
 from langchain.llms.openai import OpenAI
 from youtubesearchpython import *
 from youtube_transcript_api import YouTubeTranscriptApi
