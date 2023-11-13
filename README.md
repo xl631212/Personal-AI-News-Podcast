@@ -36,7 +36,6 @@ and Podcast Updates.
 2. Install the required packages: `pip install -r requirements.txt` (You will need to create a `requirements.txt` file containing the required libraries)
 3. Set up environment variables:
     ```
-    export SERPER_API_KEY=<Your SERPER API Key>
     export OPENAI_API_KEY=<Your OpenAI API Key>
     ```
 4. Run the app using Streamlit: `streamlit run app.py` (or whatever you name the main script).
