@@ -63,5 +63,5 @@ Stay tuned for these updates and more as we strive to make Stay Ahead your go-to
 
 Contributions are always welcome! Please ensure any pull requests are made against the `develop` branch.
 <p float="left">
-  <img src="MS_Startups_FH_lockup_hrz_alt_OnDrk_RGB.png" width="100%" />
+  <img src="images/MS_Startups_FH_lockup_hrz_alt_OnDrk_RGB.png" width="100%" />
 </p>
