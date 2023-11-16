@@ -9,7 +9,7 @@ and Podcast Updates.
   <img src="images/截屏2023-11-10 13.33.26.png" width="100%" />
 </p>
 
-## App Link：http://ai-dailynews.com/
+## Test Link: http://20.127.242.237:8501/
 ## Features:
 
 1. **Real-time Content Aggregation**: Gathers the freshest research, blogs, discussions, and news related to AI.
