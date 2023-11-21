@@ -25,7 +25,6 @@ Staying updated with the most important and personally interesting AI news in ju
    - etc...
 3. **Personalization options**: Provide diverse user options tailored to the user's listening journey.
 4. **Podcast Generation**: Not only presents written content but also converts it into an immersive audio experience.
-[TBD]5. **Interactive User Interface**: (If applicable) Provides a user-friendly web interface for customizing content preferences.
 
 ## 👾 Personalization options
 ***
@@ -72,8 +71,7 @@ As we continue to improve Stay Ahead, we have several exciting features and enha
    - [✅] **2.3 Language Selection**: Multiple language options to cater to our diverse user base.
    - [ ] **2.4 Source Filtering**: Select and prioritize the sources you're most interested in.
    - [✅] **2.5 Content Filtering**: Select and prioritize the Content you're most interested in.
-   
-- [ ] **User Feedback Functionality**: Implement a direct feedback mechanism within the app to gather invaluable insights from users.
+   - [ ] **2.6 Interactive User Interface**: (If applicable) Provides a user-friendly web interface for customizing content preferences.
 
 Stay tuned for these updates and more as we strive to make Stay Ahead your go-to AI news and podcast platform.
 
@@ -82,5 +80,5 @@ Stay tuned for these updates and more as we strive to make Stay Ahead your go-to
 
 Contributions are always welcome! Please ensure any pull requests are made against the `develop` branch.
 <p float="left">
-  <img src="images/MS_Startups_FH_lockup_hrz_alt_OnDrk_RGB.png" width="100%" />
+  <img src="[images/MS_Startups_FH_lockup_hrz_alt_OnDrk_RGB.png](https://media.licdn.com/dms/image/D5622AQEyEXoDoVnSow/feedshare-shrink_800/0/1697863781465?e=1703721600&v=beta&t=UqtSI0wvBjhLMNAG00sAOMP2rGFUMKSXDuRXhy_gf6I)https://media.licdn.com/dms/image/D5622AQEyEXoDoVnSow/feedshare-shrink_800/0/1697863781465?e=1703721600&v=beta&t=UqtSI0wvBjhLMNAG00sAOMP2rGFUMKSXDuRXhy_gf6I" width="100%" />
 </p>
