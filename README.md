@@ -80,5 +80,5 @@ Stay tuned for these updates and more as we strive to make Stay Ahead your go-to
 
 Contributions are always welcome! Please ensure any pull requests are made against the `develop` branch.
 <p float="left">
-  <img src="[images/MS_Startups_FH_lockup_hrz_alt_OnDrk_RGB.png](https://media.licdn.com/dms/image/D5622AQEyEXoDoVnSow/feedshare-shrink_800/0/1697863781465?e=1703721600&v=beta&t=UqtSI0wvBjhLMNAG00sAOMP2rGFUMKSXDuRXhy_gf6I)https://media.licdn.com/dms/image/D5622AQEyEXoDoVnSow/feedshare-shrink_800/0/1697863781465?e=1703721600&v=beta&t=UqtSI0wvBjhLMNAG00sAOMP2rGFUMKSXDuRXhy_gf6I" width="100%" />
+  <img src="images/1697863781465.jpeg" width="100%" />
 </p>
