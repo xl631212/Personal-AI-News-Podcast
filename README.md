@@ -11,7 +11,7 @@ Staying updated with the most important and personally interesting AI news in ju
   <img src="images/截屏2023-11-21 17.05.47.png" width="100%" />
 </p>
 
-#### Test Link: http://20.127.242.237:8501/
+#### Test Link: http://ai-dailynews.com/
 
 ## 🚀 Features
 
