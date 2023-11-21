@@ -80,5 +80,5 @@ Stay tuned for these updates and more as we strive to make Stay Ahead your go-to
 
 Contributions are always welcome! Please ensure any pull requests are made against the `develop` branch.
 <p float="left">
-  <img src="images/1697863781465.jpeg" width="100%" />
+  <img src="images/1697863781465.jpeg" width="70%" />
 </p>
