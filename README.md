@@ -8,6 +8,12 @@ Staying updated with the most important and personally interesting AI news in ju
 
 ## 🍀 App Preview
 
+🐦 Follow me on Twitter: [@li_xuying](https://twitter.com/li_xuying)
+
+👾 Join our Discord community: [Ai-Daily News Community](https://discord.com/invite/aKkmnn4uWy)
+
+📮 Email: xuyingli.kepler@gmail.com
+
 <p float="left">
   <img src="images/截屏2023-11-21 17.05.47.png" width="100%" />
 </p>
