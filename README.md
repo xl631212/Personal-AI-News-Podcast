@@ -4,13 +4,14 @@ AI-gen news podcast🎙 customized to personal preferences. ***It solves the pro
 
 Staying updated with the most important and personally interesting AI news in just a few-minute podcast each day. More accurate information retrieval🌟, and more enjoyable listening experience🌈.
 
+#### Website Link: http://ai-dailynews.com/
+
 ## 🍀 App Preview
 
 <p float="left">
   <img src="images/截屏2023-11-21 17.05.47.png" width="100%" />
 </p>
 
-#### Website Link: http://ai-dailynews.com/
 
 ## 🚀 Features
 
