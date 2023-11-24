@@ -13,37 +13,44 @@ Staying updated with the most important and personally interesting AI news in ju
 </p>
 
 
-## 🚀 Features
+## 🌟 Core Features
 
-1. **Real-time Content Aggregation**: Gathers the freshest research, blogs, discussions, and news related to AI.
-2. **Wide Source Integration**: Summarizes content from esteemed platforms including:
+- **Real-time Content Aggregation**: Gathers the freshest research, blogs, discussions, and news related to AI.
+
+- **Wide Source Integration**: Summarizes content from esteemed platforms including:
    - Openai Blog
    - HackerNews
    - Nvidia Blog
    - Techcrunch News
    - Google News
    - etc...
-3. **Personalization options**: Provide diverse user options tailored to the user's listening journey.
-4. **Podcast Generation**: Not only presents written content but also converts it into an immersive audio experience.
+
+- **Personalization options**: Provide diverse user options tailored to the user's listening journey.
+- 
+- **Podcast Generation**: Not only presents written content but also converts it into an immersive audio experience.
 
 ## 🎨 Personalization options
 
 This section outlines the various configuration options available to the audience using the news podcast. These options can be modified to customize the listening experience.
 
 | Customization | Options |
-| :------ | ------: |
-| Language  | English, Chinese, Cantonese  |
-| Information volume   | Only essential, Moderate, General  |
-| Audience level   | Amateur, Professional, Expert  |
-| Listening scenario   | Work/study, Commute, Lunchtime, Break, Bedtime  |
-| Interests   | LLM application, Computing and cloud, Foundation model, Generative art, Music, Generative video, Text-to-speech, Gaming, Robotics  |
+| :------ | :------ |
+| 🗣 Language  | English, Chinese, Cantonese  |
+| 💬 Information volume   | Only essential, Moderate, General  |
+| 📈 Audience level   | Amateur, Professional, Expert  |
+| 🌃 Listening scenario   | Work/study, Commute, Lunchtime, Break, Bedtime  |
+| 🧡 Interests   | LLM application, Computing and cloud, Foundation model, Generative art, Music, Generative video, Text-to-speech, Gaming, Robotics  |
 
 ## 💡 How It Works
 
 1. **Data Collection**: Uses web scraping tools to fetch information from a plethora of online AI sources.
-2. **Content Summarization**: Leverages OpenAI's Chat Model to condense and highlight crucial points from the aggregated content.
-3. **Audio Broadcast**: Produces an audio podcast, enabling users to listen on-the-go.
-4. **User-friendly Display**: Showcases the refined content in an easy-to-read format, ensuring a seamless user experience.
+   
+3. **Content Summarization**: Leverages OpenAI's Chat Model to condense and highlight crucial points from the aggregated content.
+   
+5. **Audio Broadcast**: Produces an audio podcast, enabling users to listen on-the-go.
+   
+7. **User-friendly Display**: Showcases the refined content in an easy-to-read format, ensuring a seamless user experience.
+   
 
 ## 📍 Installation and Setup
 
@@ -69,7 +76,7 @@ As we continue to improve Stay Ahead, we have several exciting features and enha
    - [✅] **2.5 Content Filtering**: Select and prioritize the Content you're most interested in.
    - [ ] **2.6 Interactive User Interface**: (If applicable) Provides a user-friendly web interface for customizing content preferences.
 
-Stay tuned for these updates and more as we strive to make Stay Ahead your go-to AI news and podcast platform.
+Stay tuned✨ for these updates and more as we strive to make Stay Ahead your go-to AI news and podcast platform.
 
 
 ## Contribute
