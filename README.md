@@ -5,7 +5,6 @@ AI-gen news podcast🎙 customized to personal preferences. ***It solves the pro
 Staying updated with the most important and personally interesting AI news in just a few-minute podcast each day. More accurate information retrieval🌟, and more enjoyable listening experience🌈.
 
 ## 🍀 App Preview
-***
 
 <p float="left">
   <img src="images/截屏2023-11-21 17.05.47.png" width="100%" />
@@ -27,7 +26,6 @@ Staying updated with the most important and personally interesting AI news in ju
 4. **Podcast Generation**: Not only presents written content but also converts it into an immersive audio experience.
 
 ## 🎨 Personalization options
-***
 
 This section outlines the various configuration options available to the audience using the news podcast. These options can be modified to customize the listening experience.
 
@@ -40,7 +38,6 @@ This section outlines the various configuration options available to the audienc
 | Interests   | LLM application, Computing and cloud, Foundation model, Generative art, Music, Generative video, Text-to-speech, Gaming, Robotics  |
 
 ## 💡 How It Works
-***
 
 1. **Data Collection**: Uses web scraping tools to fetch information from a plethora of online AI sources.
 2. **Content Summarization**: Leverages OpenAI's Chat Model to condense and highlight crucial points from the aggregated content.
@@ -48,7 +45,6 @@ This section outlines the various configuration options available to the audienc
 4. **User-friendly Display**: Showcases the refined content in an easy-to-read format, ensuring a seamless user experience.
 
 ## 📍 Installation and Setup
-***
 
 1. Make sure you have Python installed.
 2. Install the required packages: `pip install -r requirements.txt` (You will need to create a `requirements.txt` file containing the required libraries)
@@ -59,7 +55,6 @@ This section outlines the various configuration options available to the audienc
 4. Run the app using Streamlit: `streamlit run app.py` (or whatever you name the main script).
 
 ## 🔜 Future Plans
-***
 
 As we continue to improve Stay Ahead, we have several exciting features and enhancements lined up:
 
@@ -77,7 +72,6 @@ Stay tuned for these updates and more as we strive to make Stay Ahead your go-to
 
 
 ## Contribute
-***
 
 Contributions are always welcome! Please ensure any pull requests are made against the `develop` branch.
 <p float="left">
