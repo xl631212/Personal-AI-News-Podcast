@@ -11,7 +11,7 @@ Staying updated with the most important and personally interesting AI news in ju
   <img src="images/截屏2023-11-21 17.05.47.png" width="100%" />
 </p>
 
-#### Test Link: http://ai-dailynews.com/
+#### Website Link: http://ai-dailynews.com/
 
 ## 🚀 Features
 
@@ -26,13 +26,13 @@ Staying updated with the most important and personally interesting AI news in ju
 3. **Personalization options**: Provide diverse user options tailored to the user's listening journey.
 4. **Podcast Generation**: Not only presents written content but also converts it into an immersive audio experience.
 
-## 👾 Personalization options
+## 🎨 Personalization options
 ***
 
 This section outlines the various configuration options available to the audience using the news podcast. These options can be modified to customize the listening experience.
 
 | Customization | Options |
-| :------ | :-----: |
+| :------ | ------: |
 | Language  | English, Chinese, Cantonese  |
 | Information volume   | Only essential, Moderate, General  |
 | Audience level   | Amateur, Professional, Expert  |
@@ -77,6 +77,7 @@ Stay tuned for these updates and more as we strive to make Stay Ahead your go-to
 
 
 ## Contribute
+***
 
 Contributions are always welcome! Please ensure any pull requests are made against the `develop` branch.
 <p float="left">
