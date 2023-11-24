@@ -26,7 +26,7 @@ Staying updated with the most important and personally interesting AI news in ju
    - etc...
 
 - **Personalization options**: Provide diverse user options tailored to the user's listening journey.
-- 
+  
 - **Podcast Generation**: Not only presents written content but also converts it into an immersive audio experience.
 
 ## 🎨 Personalization options
