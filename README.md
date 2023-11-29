@@ -66,7 +66,7 @@ This section outlines the various configuration options available to the audienc
     ```
     export OPENAI_API_KEY=<Your OpenAI API Key>
     ```
-4. Run the app using Streamlit: `streamlit run app.py` (or whatever you name the main script).
+4. Run the app using Streamlit: `streamlit run streamlit_audio.py` (or whatever you name the main script).
 
 ## 🔜 Future Plans
 
