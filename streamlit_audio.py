@@ -45,6 +45,15 @@ system_message_3 = '''
                 你是个语言学家，擅长把英文翻译成中文。要注意表达的流畅和使用中文的表达习惯。不要返回多余的信息，只把文字翻译成中文。
                 '''
 
+def fetch_url_content(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.text
+    except requests.RequestException as e:
+        st.error(f"Error fetching URL: {e}")
+        return None
+
 def get_image_as_base64_string(path):
     with open(path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode()
