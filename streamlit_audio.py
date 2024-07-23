@@ -1,4 +1,3 @@
-import os
 import pprint
 import requests
 from bs4 import BeautifulSoup
@@ -26,9 +25,9 @@ from langchain.agents import AgentType
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 from langchain.chains.summarize import load_summarize_chain
+import os
 
-os.environ["OPENAI_API_KEY"]= st.secrets["OPENAI_API_KEY"]
-openai.api_key = os.environ["OPENAI_API_KEY"]
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 
 system_message = '''
